@@ -5,7 +5,7 @@ const pool = maria.createPool({
   host: process.env.Dbhost,
   user: process.env.DbUser,
   password: process.env.DbPw,
-  database: DataBase,
+  database: process.env.DataBase,
 });
 
 module.exports = pool;
