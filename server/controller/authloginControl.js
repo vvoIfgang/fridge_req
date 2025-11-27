@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
       "INSERT INTO userinfo (userID,userPw,userName) VALUES (?, ?, ?)",
       [userId, userPw, userName]
     );
-    res.status(201).json({ message: "회원가입 완료!" });
+      res.status(201).json({ message: "회원가입 완료!" });
   } catch (err) {
     //예외처리
     console.error(err);
@@ -56,11 +56,11 @@ exports.login = async (res, req) => {
       return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
     }
     //비밀번호가 맞을 경우 토큰 발급해줌
-    const token = jwt.sign(
+    const accesstoken = jwt.sign(
       { userId: user.userId, role: user.role },
       secretKey,
       { expiresIn: "1h" } // 유효기간
-    );
+    ); //access Token임
     const refreshToken = jwt.sign({ id: user.id }, refreshSecretKey, {
       expiresIn: "14d",
     });
@@ -71,9 +71,9 @@ exports.login = async (res, req) => {
     //클라이언트에 토큰 전달
     res.status(200).json({
       message: "로그인 성공",
-      token: token,
-      refreshToken,
-      user: { name: user.userName, role: user.role }, //편의상 유저정보를 보통 같이 보낸다고함 왜지? 프론트배려인가
+      accesstoken: accesstoken,
+      refreshToken : refreshToken,
+      user: { name: user.userName, role: user.role }, 
     });
   } catch (err) {
     console.error(err);
