@@ -6,6 +6,7 @@ const pool = maria.createPool({
   user: process.env.DbUser,
   password: process.env.DbPw,
   database: process.env.DataBase,
+  port: process.env.DbPort,
   allowPublicKeyRetrieval: true,
 });
 

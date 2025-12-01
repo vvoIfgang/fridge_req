@@ -13,6 +13,7 @@ exports.register = async (req, res) => {
 
   try {
     conn = await pool.getConnection(); //db 연결
+    console.log("db연결됨!");
     //아이디 중복 검사
     const checkResult = await conn.query(
       "SELECT * FROM userinfo WHERE userID = ?",
@@ -42,6 +43,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { userId, userPw } = req.body;
   let conn;
+  console.log("로그인 실행됨!");
   try {
     conn = await pool.getConnection();
     const checkId = await conn.query(
