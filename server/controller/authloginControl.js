@@ -7,6 +7,7 @@ const refreshSecretKey = process.env.refreshSecretKey;
 
 //회원 가입
 exports.register = async (req, res) => {
+  console.log("register 실행됨!");
   const { userId, userPw, userName } = req.body; //유저 입력 데이터 가져옴
   let conn;
 
@@ -24,9 +25,9 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(userPw, 10);
     conn.query(
       "INSERT INTO userinfo (userID,userPw,userName) VALUES (?, ?, ?)",
-      [userId, userPw, userName]
+      [userId, hashedPassword, userName]
     );
-      res.status(201).json({ message: "회원가입 완료!" });
+    res.status(201).json({ message: "회원가입 완료!" });
   } catch (err) {
     //예외처리
     console.error(err);
@@ -38,7 +39,7 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (res, req) => {
+exports.login = async (req, res) => {
   const { userId, userPw } = req.body;
   let conn;
   try {
@@ -56,7 +57,7 @@ exports.login = async (res, req) => {
       return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
     }
     //비밀번호가 맞을 경우 토큰 발급해줌
-    const accesstoken = jwt.sign(
+    const accessToken = jwt.sign(
       { userId: user.userId, role: user.role },
       secretKey,
       { expiresIn: "1h" } // 유효기간
@@ -71,9 +72,9 @@ exports.login = async (res, req) => {
     //클라이언트에 토큰 전달
     res.status(200).json({
       message: "로그인 성공",
-      accesstoken: accesstoken,
-      refreshToken : refreshToken,
-      user: { name: user.userName, role: user.role }, 
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      user: { name: user.userName, role: user.role },
     });
   } catch (err) {
     console.error(err);
@@ -110,6 +111,7 @@ exports.refresh = async (req, res) => {
       const ReCheck = await conn.query("SELECT * FROM userinfo WHERE id = ?", [
         decoded.id,
       ]);
+      const user = ReCheck[0];
       const newAccessToken = jwt.sign(
         { userId: user.userId, role: user.role },
         secretKey,
