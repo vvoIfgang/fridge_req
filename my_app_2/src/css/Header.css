@@ -1,0 +1,202 @@
+/* src/css/Header.css */
+
+/* ---------------------------------------------------- */
+/* 1. 기본 헤더 컨테이너 */
+/* ---------------------------------------------------- */
+.main-header {
+  width: 100%;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #000000;
+  color: #fff;
+
+  /* 헤더가 이미지 위에 겹치도록 absolute 유지 */
+  position: absolute;
+  top: 0;
+  z-index: 10;
+}
+
+/* 내부 콘텐츠 중앙 정렬 및 너비 제한 */
+.header-inner {
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---------------------------------------------------- */
+/* 2. 로고 및 네비게이션 스타일 */
+/* ---------------------------------------------------- */
+.header-logo a {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #fff;
+}
+
+.header-nav ul {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+.header-nav li {
+  margin: 0 15px;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.header-nav a:hover {
+  color: #f7b731;
+}
+
+/* ---------------------------------------------------- */
+/* 3. 유틸리티 및 사용자 메뉴 토글 영역 (Header.js) */
+/* ---------------------------------------------------- */
+.header-utility {
+  display: flex;
+  align-items: center;
+}
+
+/* 💡 UserMenu의 위치 기준점을 설정 */
+.user-profile-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 🛠️ 사용자 ID와 아이콘을 감싸는 클릭 영역 */
+.user-menu-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.user-menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 🛠️ 사용자 ID 텍스트 스타일 */
+.user-menu-toggle .user-id-display {
+  color: #fff;
+  font-weight: bold;
+  margin-right: 8px; /* 아이콘과의 간격 */
+  cursor: pointer;
+  padding: 0;
+}
+
+/* 🛠️ 프로필 아이콘 스타일 */
+.profile-icon {
+  color: #fff;
+  /* react-icons/fa의 기본 크기 24px 사용 */
+}
+
+.utility-btn {
+  background: none;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 8px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.utility-btn.primary {
+  background-color: #f7b731;
+  border-color: #f7b731;
+  color: #333;
+}
+
+.search-icon {
+  margin-left: 20px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------- */
+/* 4. 사용자 드롭다운 메뉴 스타일 (UserMenu.js) */
+/* ---------------------------------------------------- */
+.user-dropdown-menu {
+  position: absolute;
+  top: 100%; /* 토글 영역 바로 아래에 위치 */
+  right: 0; /* 오른쪽 정렬 */
+  width: 220px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  z-index: 1000;
+  padding: 10px;
+  margin-top: 10px; /* 헤더와의 간격 확보 */
+}
+
+/* 메뉴 헤더 정보 (이름/레벨) */
+.menu-header-info {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.user-display {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  font-size: 1em;
+}
+
+.level-badge {
+  background-color: #ffc107;
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+/* 메뉴 리스트 */
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.menu-list li a {
+  display: block;
+  padding: 8px 10px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.menu-list li a:hover {
+  background-color: #f0f0f0;
+}
+
+/* 로그아웃 버튼 */
+.user-dropdown-menu .logout-btn {
+  width: 100%;
+  padding: 8px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
