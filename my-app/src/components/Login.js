@@ -6,8 +6,8 @@ import "../css/Form.css";
 
 function Login() {
   // 🛠️ 수정: email 대신 id 상태 변수 사용
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [userId, setId] = useState("");
+  const [userPw, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -21,20 +21,20 @@ function Login() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://localhost:8080/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         // 🛠️ 수정: 백엔드로 { id, password } 전송
-        body: JSON.stringify({ id, password }),
+        body: JSON.stringify({ userId, userPw }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        if (data.token && data.username) {
-          login(data.token, data.username);
+        if (data.accessToken && data.userName) {
+          login(data.accessToken, data.userName);
           navigate("/");
         } else {
           setError(
@@ -72,7 +72,7 @@ function Login() {
             <input
               type="text"
               id="id" // 🛠️ 수정: id="id"
-              value={id}
+              value={userId}
               onChange={(e) => setId(e.target.value)}
               required
             />
@@ -83,7 +83,7 @@ function Login() {
             <input
               type="password"
               id="password"
-              value={password}
+              value={userPw}
               onChange={(e) => setPassword(e.target.value)}
               required
             />

@@ -1,20 +1,25 @@
 {
   "files": {
-    "main.css": "/static/css/main.797b70be.css",
-    "main.js": "/static/js/main.63080c58.js",
+    "main.css": "/static/css/main.d62d8c7e.css",
+    "main.js": "/static/js/main.4e568cac.js",
     "static/js/453.117b0875.chunk.js": "/static/js/453.117b0875.chunk.js",
     "static/media/chicken soup.jpg": "/static/media/chicken soup.cfbaa3271300a460fcab.jpg",
+    "static/media/About.jpg": "/static/media/About.8c866eeb75d697c3f2c2.jpg",
     "static/media/chicken.avif": "/static/media/chicken.f26e71254035536c311f.avif",
     "static/media/stake.avif": "/static/media/stake.7b0afbb2c6a4c79ac0b7.avif",
+    "static/media/service.jpg": "/static/media/service.6572201f1f3254481fbb.jpg",
     "static/media/intro.jpeg": "/static/media/intro.3a0bed87084cf6f1ac18.jpeg",
     "static/media/pizza.jpg": "/static/media/pizza.1fabae84030991d89748.jpg",
+    "static/media/nutrition.jpg": "/static/media/nutrition.26a7362623efdacbd725.jpg",
+    "static/media/recipe.avif": "/static/media/recipe.fa7c3d2f59fe63b9d322.avif",
+    "static/media/Gemini.webp": "/static/media/Gemini.a893669a2b1b71b84ca9.webp",
     "index.html": "/index.html",
-    "main.797b70be.css.map": "/static/css/main.797b70be.css.map",
-    "main.63080c58.js.map": "/static/js/main.63080c58.js.map",
+    "main.d62d8c7e.css.map": "/static/css/main.d62d8c7e.css.map",
+    "main.4e568cac.js.map": "/static/js/main.4e568cac.js.map",
     "453.117b0875.chunk.js.map": "/static/js/453.117b0875.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.797b70be.css",
-    "static/js/main.63080c58.js"
+    "static/css/main.d62d8c7e.css",
+    "static/js/main.4e568cac.js"
   ]
 }

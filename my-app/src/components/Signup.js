@@ -4,10 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import "../css/Form.css";
 
 function Signup() {
-  const [username, setUsername] = useState("");
+  const [userName, setUsername] = useState("");
   // 🛠️ 수정: email 대신 id 상태 변수 사용
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [userId, setId] = useState("");
+  const [userPw, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -18,15 +18,19 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+    const userData = {
+      userId: userId,
+      userPw: userPw,
+      userName: userName,
+    };
     try {
-      const response = await fetch("http://localhost:5000/api/signup", {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         // 🛠️ 수정: 백엔드로 { username, id, password } 전송
-        body: JSON.stringify({ username, id, password }),
+        body: JSON.stringify(userData),
       });
 
       const data = await response.json();
@@ -65,7 +69,7 @@ function Signup() {
             <input
               type="text"
               id="username"
-              value={username}
+              value={userName}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
@@ -76,7 +80,7 @@ function Signup() {
             <input
               type="text"
               id="id" // 🛠️ 수정: id="id"
-              value={id}
+              value={userId}
               onChange={(e) => setId(e.target.value)}
               required
             />
@@ -87,7 +91,7 @@ function Signup() {
             <input
               type="password"
               id="password"
-              value={password}
+              value={userPw}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
