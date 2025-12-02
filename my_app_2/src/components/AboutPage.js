@@ -5,7 +5,8 @@ import "../css/AboutPage.css";
 
 import developerHeroImageUrl from "../images/About.jpg";
 import koProfile from "../images/ko.jpg"; // 고석현 프로필
-import kimProfile from "../images/kim.jpg"; // 이정민 프로필
+import kimProfile from "../images/kim.jpg"; // 김주영 프로필
+import LiProfile from "../images/Li.png"; // 이정민 프로필
 
 // 팀원 데이터
 const teamMembers = [
@@ -28,7 +29,7 @@ const teamMembers = [
     role: "AI/ML & Data Analyst",
     description:
       "냉장고 속 재료 기반 AI 추천 알고리즘을 개발했습니다. 개인화된 레시피 추천을 구현했습니다.",
-    profileImage: "https://via.placeholder.com/100x100?text=PJH",
+    profileImage: LiProfile,
   },
 ];
 
@@ -103,3 +104,4 @@ function AboutPage() {
 }
 
 export default AboutPage;
+
