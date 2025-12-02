@@ -31,7 +31,7 @@ function MyRefrigerator() {
     setMessage("냉장고 정보를 불러오는 중...");
 
     try {
-      const response = await api.get(`/api/refrigerator/${loginId}`);
+      const response = await api.get(`/api/refrigerator/me`);
 
       if (Array.isArray(response)) {
         setIngredients(response);
@@ -91,7 +91,7 @@ function MyRefrigerator() {
 
     try {
       if (editingId) {
-        await api.put(`/api/refrigerator/${loginId}/${editingId}`, payload);
+        await api.put(`/api/refrigerator/me/${editingId}`, payload);
 
         setIngredients(
           ingredients.map((item) =>
@@ -104,7 +104,7 @@ function MyRefrigerator() {
         setEditingId(null);
       } else {
         const response = await api.post(
-          `/api/refrigerator/${loginId}`,
+          `/api/refrigerator/me`,
           payload
         );
 
@@ -132,7 +132,7 @@ function MyRefrigerator() {
     setMessage("재료 삭제 요청 중...");
 
     try {
-      await api.delete(`/api/refrigerator/${loginId}/${id}`);
+      await api.delete(`/api/refrigerator/me/${id}`);
 
       setIngredients(ingredients.filter((item) => item.id !== id));
       setMessage(`✅ '${name}'를 냉장고에서 삭제했습니다.`);
@@ -336,3 +336,4 @@ function MyRefrigerator() {
 }
 
 export default MyRefrigerator;
+
