@@ -5,5 +5,4 @@ router.post("/register", authloginControl.register);
 router.post("/login", authloginControl.login);
 router.post("/refresh", authloginControl.refresh);
 router.post("/logout", authloginControl.logout);
-
 module.exports = router;

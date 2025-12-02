@@ -3,10 +3,10 @@ const path = require("path");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../my-app/build")));
+app.use(express.static(path.join(__dirname, "../my_app_2/build")));
 
 const authRoute = require("./routes/authlogin");
 const fridgeRoute = require("./routes/fridgeRouter");
@@ -18,5 +18,5 @@ app.listen(process.env.PORT, () => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../my-app/build/index.html"));
+  res.sendFile(path.join(__dirname, "../my_app_2/build/index.html"));
 });

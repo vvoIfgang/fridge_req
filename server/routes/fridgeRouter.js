@@ -9,4 +9,10 @@ router.post("/add", verifyToken, fridgeController.addIngredient); // 재료 추�
 
 router.delete("/:id", verifyToken, fridgeController.deleteIngredient);
 
+router.put("/update", verifyToken, fridgeController.updateIngredient);
+
+// router.get("/profile/:userId", verifyToken, authController.getProfile);
+
+// router.put("/profile/:userId", verifyToken, authController.updateProfile);
+
 module.exports = router;

@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
     }
     //비밀번호가 맞을 경우 토큰 발급해줌
     const accessToken = jwt.sign(
-      { userId: user.userId, role: user.role },
+      { id: user.id, userId: user.userId, role: user.role },
       secretKey,
       { expiresIn: "1h" } // 유효기간
     ); //access Token임
