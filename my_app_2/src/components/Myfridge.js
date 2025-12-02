@@ -11,7 +11,7 @@ function MyRefrigerator() {
   const { userName: loginId } = useAuth();
   const api = useApi();
 
-  const [ingredients, setIngredients] = useState([]);
+  const [ingredient, setIngredient] = useState([]);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,7 +21,7 @@ function MyRefrigerator() {
   const [formData, setFormData] = useState({ name: "", quantity: "" });
 
   // 1. ⚙️ 재료 목록 조회 로직 (GET)
-  const fetchIngredients = useCallback(async () => {
+  const fetchIngredient = useCallback(async () => {
     if (!loginId) {
       setIsLoading(false);
       return;
@@ -31,14 +31,14 @@ function MyRefrigerator() {
     setMessage("냉장고 정보를 불러오는 중...");
 
     try {
-      const response = await api.get(`/api/refrigerator/me`);
+      const response = await api.get(`/api/fridge`);
 
       if (Array.isArray(response)) {
-        setIngredients(response);
-      } else if (Array.isArray(response.ingredients)) {
-        setIngredients(response.ingredients);
+        setIngredient(response);
+      } else if (Array.isArray(response.ingredient)) {
+        setIngredient(response.ingredient);
       } else {
-        setIngredients([]);
+        setIngredient([]);
       }
       setMessage("✅ 정보를 성공적으로 불러왔습니다.");
     } catch (error) {
@@ -51,8 +51,8 @@ function MyRefrigerator() {
   }, [loginId, api]);
 
   useEffect(() => {
-    fetchIngredients();
-  }, [fetchIngredients]);
+    fetchIngredient();
+  }, [fetchIngredient]);
 
   // 2. 📝 입력 필드 변경 핸들러 (생략)
   const handleFormChange = (e) => {
@@ -91,10 +91,10 @@ function MyRefrigerator() {
 
     try {
       if (editingId) {
-        await api.put(`/api/refrigerator/me/${editingId}`, payload);
+        await api.put(`/api/fridge/update`, { ...payload, id: editingId });
 
-        setIngredients(
-          ingredients.map((item) =>
+        setIngredient(
+          ingredient.map((item) =>
             item.id === editingId
               ? { ...item, name: trimmedName, quantity }
               : item
@@ -103,12 +103,13 @@ function MyRefrigerator() {
         setMessage(`✅ '${trimmedName}' 정보가 수정되었습니다.`);
         setEditingId(null);
       } else {
-        const response = await api.post(
-          `/api/refrigerator/me`,
-          payload
-        );
-
-        setIngredients((prev) => [...prev, response]);
+        const response = await api.post(`/api/fridge/add`, payload);
+        const newItem = {
+          id: response.id, // 서버가 준 ID 사용
+          name: payload.name,
+          quantity: payload.quantity,
+        };
+        setIngredient((prev) => [...prev, newItem]);
         setMessage(`✅ '${trimmedName}'를 냉장고에 추가했습니다.`);
         setIsAdding(false);
       }
@@ -132,9 +133,9 @@ function MyRefrigerator() {
     setMessage("재료 삭제 요청 중...");
 
     try {
-      await api.delete(`/api/refrigerator/me/${id}`);
+      await api.delete(`/api/fridge/${id}`);
 
-      setIngredients(ingredients.filter((item) => item.id !== id));
+      setIngredient(ingredient.filter((item) => item.id !== id));
       setMessage(`✅ '${name}'를 냉장고에서 삭제했습니다.`);
     } catch (error) {
       console.error("Delete Error:", error);
@@ -175,7 +176,7 @@ function MyRefrigerator() {
 
       {/* 1. 재료 목록 표시 */}
       <div className="refrigerator-list-container">
-        <h3>보유 재료 ({ingredients.length}개)</h3>
+        <h3>보유 재료 ({ingredient.length}개)</h3>
 
         {/* 데이터 테이블 외곽선 및 헤더 역할 컨테이너 */}
         <div className="ingredient-list-wrapper">
@@ -187,13 +188,13 @@ function MyRefrigerator() {
             <span className="button-group">관리</span> {/* 관리 버튼 영역 */}
           </div>
 
-          {ingredients.length === 0 ? (
+          {ingredient.length === 0 ? (
             <p className="status-message info no-border">
               냉장고가 비어있습니다. 재료를 추가해 주세요!
             </p>
           ) : (
             <ul className="ingredient-list">
-              {ingredients.map((item) => (
+              {ingredient.map((item) => (
                 <li
                   key={item.id}
                   className={editingId === item.id ? "editing" : ""}
@@ -336,4 +337,3 @@ function MyRefrigerator() {
 }
 
 export default MyRefrigerator;
-
