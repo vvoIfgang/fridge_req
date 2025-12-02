@@ -9,6 +9,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../my-app/build")));
 
 const authRoute = require("./routes/authlogin");
+const fridgeRoute = require("./routes/fridgeRouter");
+app.use("/api/fridge", fridgeRoute);
 app.use("/api/auth", authRoute); //api 요청 /api/auth/login, /api/auth/register
 
 app.listen(process.env.PORT, () => {
