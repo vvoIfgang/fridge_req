@@ -3,7 +3,7 @@
 import { useCallback, useMemo } from "react"; // 1. useCallback, useMemo 추가
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:60014";
 const REFRESH_API_URL = `${API_BASE_URL}/api/auth/refresh`;
 
 let isRefreshing = false;

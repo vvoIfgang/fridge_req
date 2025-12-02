@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import "../css/Form.css";
 
 // ⚠️ 백엔드 API 엔드포인트 URL 확인 (8080 포트 사용 가정)
-const LOGIN_API_URL = "http://localhost:8080/api/auth/login";
+const LOGIN_API_URL = "http://localhost:60014/api/auth/login";
 
 function Login() {
   const [userId, setId] = useState("");
