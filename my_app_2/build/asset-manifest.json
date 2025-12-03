@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3164def8.css",
-    "main.js": "/static/js/main.89460f60.js",
+    "main.js": "/static/js/main.77b43561.js",
     "static/js/453.117b0875.chunk.js": "/static/js/453.117b0875.chunk.js",
     "static/media/chicken soup.jpg": "/static/media/chicken soup.cfbaa3271300a460fcab.jpg",
     "static/media/About.jpg": "/static/media/About.8c866eeb75d697c3f2c2.jpg",
@@ -18,11 +18,11 @@
     "static/media/Gemini.webp": "/static/media/Gemini.a893669a2b1b71b84ca9.webp",
     "index.html": "/index.html",
     "main.3164def8.css.map": "/static/css/main.3164def8.css.map",
-    "main.89460f60.js.map": "/static/js/main.89460f60.js.map",
+    "main.77b43561.js.map": "/static/js/main.77b43561.js.map",
     "453.117b0875.chunk.js.map": "/static/js/453.117b0875.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.3164def8.css",
-    "static/js/main.89460f60.js"
+    "static/js/main.77b43561.js"
   ]
 }

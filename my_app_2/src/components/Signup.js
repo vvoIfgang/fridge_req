@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // 🔑 useAuth 훅 가져오기
 import "../css/Form.css";
 
-const REGISTER_API_URL = "http://localhost:60014/api/auth/register";
+const REGISTER_API_URL = "/api/auth/register";
 
 function Signup() {
   const [userName, setUsername] = useState("");
