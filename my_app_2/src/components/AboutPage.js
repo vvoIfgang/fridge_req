@@ -22,14 +22,14 @@ const teamMembers = [
     role: "Backend & API Specialist",
     description:
       "안정적인 Recipe API 연동과 서버 인프라 구축을 맡았습니다. 데이터 흐름의 핵심입니다.",
-    profileImage: kimProfile,
+    profileImage: LiProfile,
   },
   {
     name: "김주영",
     role: "AI/ML & Data Analyst",
     description:
       "냉장고 속 재료 기반 AI 추천 알고리즘을 개발했습니다. 개인화된 레시피 추천을 구현했습니다.",
-    profileImage: LiProfile,
+    profileImage: kimProfile,
   },
 ];
 
@@ -104,4 +104,5 @@ function AboutPage() {
 }
 
 export default AboutPage;
+
 
