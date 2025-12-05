@@ -1,0 +1,268 @@
+/* src/css/Profile.css 또는 src/css/Refrigerator.css (버튼 통합 요청 반영) */
+
+/* ----------------------------------- */
+/* 1. 컨테이너 폭 최대화 및 기본 스타일 */
+/* ----------------------------------- */
+
+.profile-page-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 40px auto;
+  padding: 35px 50px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.profile-page-container h2 {
+  font-size: 1.8em;
+  font-weight: 600;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 15px;
+}
+
+/* ----------------------------------- */
+/* 2. 재료 목록 섹션 (리스트 뷰) */
+/* ----------------------------------- */
+
+.refrigerator-list-container {
+  padding: 0;
+  margin-top: 20px;
+}
+
+.refrigerator-list-container h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  border-top: 2px solid #212529; /* 굵은 검은색 상단 구분선 */
+}
+
+/* 목록 아이템 (높이 감소 및 Flexbox 명확화) */
+.ingredient-list li {
+  display: flex;
+  /* 🎯 핵심: 재료 정보 영역, 버튼 그룹, 체크박스 등 모든 하위 요소를 정렬 */
+  justify-content: flex-start; /* 모든 요소를 왼쪽에서 시작하여 나열 */
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.15s;
+  gap: 15px; /* 내부 요소 간 간격 넓힘 */
+}
+
+.ingredient-list li:hover {
+  background-color: #f8f9fa;
+}
+
+/* 🎯 재료 정보 영역 (이름 + 수량) - 이제 이 컨테이너는 주도권을 갖지 않습니다. */
+.ingredient-info {
+  /* ❌ flex-grow 제거: li의 주 정렬은 flex-start이므로 이 요소가 공간을 독점하지 않음 */
+  flex-grow: 0;
+  display: flex;
+  align-items: center;
+  /* 버튼 그룹이 .button-group-col로 분리되어 있으므로, gap으로 충분 */
+}
+
+/* 🎯 재료명 컬럼 */
+.ingredient-name-col {
+  /* 너비 고정 또는 큰 비율 할당 */
+  width: 300px; /* 재료명에 충분한 공간 할당 */
+  flex-shrink: 0;
+  font-weight: 500;
+  color: #343a40;
+  font-size: 1em;
+}
+
+/* 🎯 수량 컬럼 */
+.ingredient-quantity-col {
+  /* 너비 고정 */
+  flex-shrink: 0;
+  width: 150px;
+  color: #495057;
+  font-size: 0.95em;
+  text-align: left;
+  padding-left: 20px; /* 재료명과의 간격 추가 */
+}
+
+/* --- 헤더 스타일 (목록 구조와 일치) --- */
+
+.ingredient-header {
+  display: flex;
+  justify-content: flex-start; /* li와 동일하게 flex-start로 시작 */
+  align-items: center;
+  font-weight: 600;
+  padding: 8px 10px;
+  border-bottom: 1px solid #dee2e6;
+  color: #495057;
+  background-color: #f8f9fa;
+  gap: 15px; /* li와 동일하게 간격 유지 */
+}
+
+/* 헤더 내부의 이름/수량/관리 컬럼에 너비 할당 */
+.ingredient-header .ingredient-name-col {
+  width: 300px;
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #212529;
+}
+.ingredient-header .ingredient-quantity-col {
+  width: 150px;
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #212529;
+  padding-left: 20px;
+}
+/* 🎯 버튼 그룹 헤더는 목록 항목과 동일한 공간을 차지하도록 조정 */
+.ingredient-header .button-group-col {
+  flex-shrink: 0;
+  width: 150px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ----------------------------------- */
+/* 3. 목록 내 버튼 그룹 (우측 배치) */
+/* ----------------------------------- */
+
+.refrigerator-list-container .button-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* 🎯 버튼 그룹 컨테이너: 고정 폭을 주어 버튼들이 뭉쳐 보이도록 함 */
+.button-group-col {
+  width: 150px; /* 버튼 그룹 전체 폭을 고정 */
+  display: flex;
+  justify-content: flex-end; /* 버튼들을 오른쪽으로 밀착 */
+  flex-shrink: 0; /* 너비가 줄어들지 않도록 고정 */
+  margin-left: auto; /* 🎯 핵심: 이 요소만 오른쪽 끝으로 밀어냄 */
+}
+
+.refrigerator-list-container button {
+  padding: 4px 8px;
+  font-size: 0.85em;
+  border-radius: 4px;
+  font-weight: 500;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  color: #212529;
+}
+
+/* ----------------------------------- */
+/* 4. 재료 추가/수정/분석 관련 스타일 */
+/* ----------------------------------- */
+
+.add-ingredient-section {
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+/* 추가 폼 필드 */
+.add-form-fields {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 15px;
+}
+.add-form-fields .form-group-inline {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.add-form-fields label {
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+.add-form-fields input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+}
+
+/* 인라인 수정 폼의 컬럼 너비를 일반 목록과 일치시켜 정렬 유지 */
+.edit-inline-form {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  gap: 15px; /* li와 동일하게 간격 유지 */
+}
+/* 수정 폼 내 이름/수량/버튼 컬럼 너비 조정 */
+.edit-inline-form .ingredient-name-col {
+  width: 300px;
+  flex-shrink: 0;
+}
+.edit-inline-form .ingredient-quantity-col {
+  width: 150px;
+  flex-shrink: 0;
+  padding-left: 20px;
+}
+.edit-inline-form .button-group-col {
+  margin-left: auto;
+} /* 오른쪽으로 밀기 */
+
+.edit-inline-form input[type="text"] {
+  padding: 8px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+/* 추가 버튼 그룹 */
+.add-button-group {
+  justify-content: flex-start;
+}
+
+/* 분석 모드 체크박스 및 팁 */
+.analyze-checkbox-container {
+  width: 20px;
+  flex-shrink: 0;
+  margin-right: 15px;
+}
+.analyze-mode-tip {
+  font-size: 0.9em;
+  font-weight: normal;
+  color: #dc3545;
+  margin-left: 10px;
+}
+
+/* 분석 및 액션 버튼 스타일 */
+.analyze-btn {
+  background-color: #007bff;
+  color: #ffffff;
+  border: 1px solid #007bff;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 600;
+}
+.add-btn {
+  background-color: #6c757d;
+  color: #ffffff;
+  border: 1px solid #6c757d;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 600;
+}
+.analyze-request-btn {
+  background-color: #28a745;
+  color: #ffffff;
+  border: 1px solid #28a745;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+/* 수평선 */
+hr {
+  border: 0;
+  border-top: 1px solid #dee2e6;
+  margin: 20px 0;
+}

@@ -1,0 +1,228 @@
+/* src/css/IntroPage.css */
+
+.intro-page-layout {
+  width: 100%;
+  /* Header가 fixed/absolute일 경우, 콘텐츠가 Header 뒤로 숨지 않도록 padding-top 추가 */
+  padding-top: 80px; /* Header 높이에 따라 조절 */
+  background-color: #f8f8f8; /* 전체 페이지의 기본 배경색 */
+}
+
+/* --- 1. 상단 메인 Hero 섹션 --- */
+.intro-main-hero {
+  height: 70vh; /* 뷰포트 높이의 70% */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white; /* 텍스트 색상 */
+  overflow: hidden; /* 오버플로우 방지 */
+}
+
+.intro-main-hero::before {
+  /* 어두운 오버레이 */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 오버레이 */
+  z-index: 1;
+}
+
+.intro-hero-content {
+  position: relative;
+  z-index: 2; /* 오버레이 위에 오도록 */
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.intro-sub-heading {
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+  font-weight: 300;
+  margin-bottom: 15px;
+  color: #ffda79; /* 포인트 색상 */
+}
+
+.intro-main-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 25px;
+}
+
+.intro-description {
+  font-size: 1.2rem;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* --- 2. 회사 철학 / 비전 섹션 --- */
+.intro-vision-section {
+  max-width: 900px;
+  margin: 80px auto; /* 중앙 정렬, 상하 여백 */
+  padding: 0 20px;
+  text-align: center;
+  color: #333;
+}
+
+.intro-vision-section h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.intro-vision-section p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+.vision-divider {
+  width: 100px;
+  height: 3px;
+  background-color: #ffda79; /* 포인트 색상 */
+  border: none;
+  margin: 40px auto; /* 중앙 정렬 */
+}
+
+/* --- 3. 서비스 핵심 가치 섹션 (흰색 배경, 둥근 디자인) --- */
+.intro-values-section {
+  /* 배경 이미지 관련 속성 제거 */
+  background-image: none !important;
+  background-color: #ffffff; /* 흰색 배경 */
+  padding: 100px 20px;
+  position: relative;
+  color: #333;
+  text-align: center;
+}
+
+/* 배경 이미지 오버레이만 숨김 */
+.intro-values-section::before {
+  content: none;
+  display: none;
+}
+
+.values-overlay {
+  position: relative;
+  z-index: 2;
+  padding: 0;
+  width: 100%;
+}
+
+.intro-values-section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 70px;
+  color: #333;
+  text-shadow: none;
+}
+
+.value-items {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.value-item {
+  flex: 0 0 250px;
+  width: 250px;
+  height: 250px;
+  padding: 20px;
+
+  border-radius: 50%; /* 둥근 모양 */
+
+  /* 🛠️ 수정: 기본 배경색은 흰색으로 유지하고, 각 아이템별로 색상 지정 */
+  background-color: #fff;
+  border: 1px solid #ddd; /* 얇은 테두리 */
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 입체감 그림자 */
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  transition: transform 0.4s ease, box-shadow 0.4s ease,
+    background-color 0.4s ease; /* 배경색 트랜지션 추가 */
+}
+
+/* 🛠️ 추가: 각 value-item에 빨강, 초록, 파랑 배경색 적용 */
+.value-items .value-item:nth-child(1) {
+  background-color: #ff6b6b; /* 빨간색 계열 */
+  color: #fff; /* 글씨색 흰색으로 */
+}
+.value-items .value-item:nth-child(2) {
+  background-color: #2ecc71; /* 초록색 계열 */
+  color: #fff;
+}
+.value-items .value-item:nth-child(3) {
+  background-color: #3498db; /* 파란색 계열 */
+  color: #fff;
+}
+
+.value-item:hover {
+  transform: translateY(-5px) scale(1.03);
+  /* 🛠️ 수정: 호버 시 배경색은 고정된 색상에서 살짝 어둡게 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+.value-items .value-item:nth-child(1):hover {
+  background-color: #e74c3c;
+} /* 빨간색 호버 */
+.value-items .value-item:nth-child(2):hover {
+  background-color: #27ae60;
+} /* 초록색 호버 */
+.value-items .value-item:nth-child(3):hover {
+  background-color: #2980b9;
+} /* 파란색 호버 */
+
+/* 🛠️ 제거: 노란색 원형 아이콘 플레이스홀더 제거 */
+.value-item h3::before {
+  content: none;
+  display: none;
+}
+
+.value-item h3 {
+  font-size: 1.5rem;
+  color: inherit; /* 🛠️ 수정: 부모 (value-item)의 color 속성 상속 */
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.value-item p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: inherit; /* 🛠️ 수정: 부모 (value-item)의 color 속성 상속 */
+}
+
+/* --- 4. 클로징 / 콜투액션 섹션 --- */
+.intro-cta-section {
+  padding: 80px 20px;
+  text-align: center;
+  background-color: #333; /* 어두운 배경 */
+  color: white;
+}
+
+.intro-cta-section p {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+}
+
+.intro-cta-btn {
+  background-color: #ffda79; /* 포인트 색상 버튼 */
+  color: #333;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1;
+}
