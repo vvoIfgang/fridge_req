@@ -1,0 +1,386 @@
+/* src/css/Myfridge.css - 최종 통합 및 수량 오른쪽 정렬 버전 */
+
+/* ----------------------------------- */
+/* 0. 유틸리티 클래스 */
+/* ----------------------------------- */
+
+.btn-primary {
+  background-color: #212529;
+  color: #ffffff;
+  border: 1px solid #212529;
+}
+
+.btn-primary:hover {
+  background-color: #495057;
+  border-color: #495057;
+}
+
+/* ----------------------------------- */
+/* 1. 컨테이너 폭 최대화 및 기본 스타일 */
+/* ----------------------------------- */
+
+.profile-page-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 40px auto;
+  padding: 35px 50px;
+  background-color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-family: "Noto Sans KR", sans-serif;
+  color: #212529;
+}
+
+.profile-page-container h2 {
+  font-size: 2em;
+  font-weight: 700;
+  border-bottom: 2px solid #212529;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.profile-page-container h3 {
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #dee2e6;
+  margin: 30px 0;
+}
+
+/* ----------------------------------- */
+/* 2. 상태 메시지 (Alerts) */
+/* ----------------------------------- */
+
+.status-message {
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: 1px solid;
+  text-align: center;
+}
+
+.status-message.success {
+  background-color: #e6f7e9;
+  color: #28a745;
+  border-color: #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #fce7e7;
+  color: #dc3545;
+  border-color: #f5c6cb;
+}
+
+.status-message.info {
+  background-color: #eaf3fb;
+  color: #007bff;
+  border-color: #bee5eb;
+}
+
+.info-no-border {
+  border: none !important;
+  background-color: transparent !important;
+  color: #6c757d !important;
+  padding: 20px 0 !important;
+  font-style: italic;
+}
+
+.analyze-mode-tip {
+  margin-left: 10px;
+  font-size: 0.75em;
+  color: #007bff;
+  font-weight: 400;
+}
+
+/* ----------------------------------- */
+/* 3. 재료 목록 섹션 (개별 카드 뷰) */
+/* ----------------------------------- */
+
+.refrigerator-list-container {
+  padding: 0;
+}
+
+.ingredient-list-wrapper {
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+/* 열 너비 정의 (헤더와 항목 공통) */
+.analyze-checkbox-header,
+.analyze-checkbox-container {
+  width: 60px;
+  flex-shrink: 0;
+  text-align: center;
+  padding-right: 10px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+/* 체크박스 크기 조정 */
+.analyze-checkbox-container input[type="checkbox"] {
+  transform: scale(0.9);
+  margin: 0;
+}
+
+.ingredient-name-col {
+  width: 40%;
+  /* 🎯 [유지] Flexbox 축소 허용 */
+  flex-shrink: 1;
+  font-weight: inherit;
+  /* 🎯 [유지] 재료 이름은 왼쪽 정렬 */
+  text-align: left;
+}
+
+.ingredient-list .ingredient-quantity-col {
+  width: 20%;
+  /* 🎯 [유지] Flexbox 축소 허용 */
+  flex-shrink: 1;
+  /* 🎯 [핵심] 수량 열을 오른쪽 정렬로 변경 */
+  text-align: right;
+  /* 🎯 [핵심] 관리 버튼과의 간격 확보 */
+  padding-right: 5px;
+}
+
+.button-group-col {
+  width: 250px;
+  flex-shrink: 1;
+  min-width: 130px;
+  text-align: right;
+}
+
+/* 헤더 스타일 */
+.ingredient-header {
+  display: flex;
+  align-items: center;
+  /* 목록 아이템 (li)과 수평 패딩 (20px) 일치 */
+  padding: 12px 25px 5px;
+  background-color: transparent;
+  border-bottom: none;
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+/* 헤더 내 수량 열 패딩 제거 */
+.ingredient-header .ingredient-quantity-col {
+  width: 15%;
+  /* 🎯 [유지] Flexbox 축소 허용 */
+  flex-shrink: 1;
+  /* 🎯 [핵심] 수량 열을 오른쪽 정렬로 변경 */
+  text-align: center;
+  /* 🎯 [핵심] 관리 버튼과의 간격 확보 */
+}
+
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+/* 목록 아이템 (카드 스타일 및 높이 최소화) */
+.ingredient-list li {
+  display: flex;
+  align-items: center;
+  padding: 3px 20px;
+  margin-bottom: 8px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+  line-height: 1.1;
+}
+
+.ingredient-list li:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ingredient-list li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* 재료 정보 영역 (목록 아이템 내부) */
+.ingredient-info {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.85em;
+  line-height: 1.1;
+}
+
+/* ----------------------------------- */
+/* 4. 목록 내 수정 폼 (인라인 편집) */
+/* ----------------------------------- */
+
+.edit-inline-form {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.edit-inline-form input {
+  padding: 2px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  margin-right: 10px;
+  font-size: 0.95em;
+  box-sizing: border-box;
+  line-height: 1.1;
+  text-align: left; /* 이름 입력 필드는 왼쪽 정렬 유지 */
+}
+
+/* 인라인 수정 시 수량 입력 필드 내부 텍스트 및 패딩 조정 */
+.edit-inline-form .ingredient-quantity-col input {
+  /* 🎯 [핵심] 수량 입력 필드의 텍스트도 오른쪽 정렬로 변경 */
+  text-align: right;
+  /* 🎯 [핵심] 오른쪽 패딩을 15px로 맞춰 목록 데이터와 일치 */
+  padding-right: 15px;
+  padding-left: 8px;
+}
+
+/* ----------------------------------- */
+/* 5. 재료 추가 입력 폼 (섹션) */
+/* ----------------------------------- */
+
+.add-ingredient-section {
+  padding-top: 30px;
+}
+
+.add-form h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+}
+
+.add-form-fields {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 15px;
+}
+
+.add-form-fields .form-group-inline {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-form-fields label {
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 60px;
+  color: #212529;
+}
+
+.add-form-fields input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+/* ----------------------------------- */
+/* 6. 버튼 스타일 공통 및 그룹 */
+/* ----------------------------------- */
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 이 섹션을 맨 아래로 이동: 기존 마진 20px을 유지하고 hr 간격과 맞춤 */
+.button-actions-top {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+  margin-top: 30px;
+}
+
+.add-button-group {
+  gap: 10px;
+}
+
+/* 모든 버튼의 기본 스타일 (목록 버튼 최소화 스타일 분리) */
+button {
+  cursor: pointer;
+  padding: 8px 15px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+/* 목록 아이템 내 버튼 전용 스타일 (극단적 최소화) - 통합 */
+.ingredient-list li button {
+  padding: 2px 5px;
+  font-size: 0.7em;
+  min-width: 45px;
+}
+
+/* 메인 (분석, 추가) 버튼 - .btn-primary 스타일을 사용 */
+.analyze-btn,
+.add-btn {
+  padding: 10px 15px;
+  font-size: 0.9em;
+  min-width: 70px;
+}
+
+/* 분석 요청 버튼 */
+.analyze-request-btn {
+  background-color: #007bff;
+  color: #ffffff;
+  border: 1px solid #007bff;
+  padding: 10px 15px;
+  font-size: 0.9em;
+  min-width: 70px;
+}
+
+.analyze-request-btn:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* 수정, 저장 버튼 */
+.edit-btn,
+.save-btn {
+  background-color: #ffffff;
+  color: #212529;
+  border: 1px solid #212529;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background-color: #f8f9fa;
+}
+
+/* 삭제, 취소 버튼 */
+.delete-btn,
+.cancel-btn {
+  background-color: #ffffff;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+}
+
+.delete-btn:hover,
+.cancel-btn:hover {
+  background-color: #e9ecef;
+}
+
+/* 비활성화된 버튼 */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f0f0f0 !important;
+  color: #adb5bd !important;
+  border-color: #e9ecef !important;
+}
