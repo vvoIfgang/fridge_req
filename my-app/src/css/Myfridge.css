@@ -1,0 +1,639 @@
+/* src/css/Myfridge.css - 최종 정리 및 최적화 버전 (CSS 깨짐 수정 완료) */
+
+/* ---------------------------------------------------- */
+/* Global Definitions & Base Colors */
+/* ---------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  color: #212529;
+}
+
+/* 0. 유틸리티 클래스 */
+.btn-primary {
+  background-color: #343a40;
+  color: #ffffff;
+  border: 1px solid #343a40;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-primary:hover {
+  background-color: #495057;
+  border-color: #495057;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------------------------------------------------- */
+/* 1. 컨테이너 폭 최대화 및 기본 스타일 */
+/* ---------------------------------------------------- */
+
+.profile-page-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 40px auto;
+  padding: 35px 50px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 5px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  line-height: 1.6;
+  overflow: visible;
+  position: relative;
+}
+
+.profile-page-container h2 {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #343a40;
+  border-bottom: 3px solid #ced4da;
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+}
+
+.profile-page-container h3 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #343a40;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background-color: #e9ecef;
+  margin: 30px 0;
+}
+
+/* ---------------------------------------------------- */
+/* 2. 상태 메시지 (Alerts) */
+/* ---------------------------------------------------- */
+
+.status-message {
+  padding: 12px 20px;
+  margin-bottom: 25px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: 1px solid;
+  text-align: center;
+  font-size: 0.95em;
+  animation: fadeInDown 0.4s ease-out;
+}
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-message.success {
+  background-color: #e3f9ed;
+  color: #208e45;
+  border-color: #c8e6c9;
+}
+
+.status-message.error {
+  background-color: #fcebeb;
+  color: #c93737;
+  border-color: #f5c6c6;
+}
+
+.status-message.info {
+  background-color: #eaf3fb;
+  color: #007bff;
+  border-color: #b3e0ff;
+}
+
+.info-no-border {
+  border: none !important;
+  background-color: transparent !important;
+  color: #6c757d !important;
+  padding: 20px 0 !important;
+  font-style: italic;
+  font-size: 0.85em;
+}
+
+.analyze-mode-tip {
+  margin-left: 10px;
+  font-size: 0.75em;
+  color: #007bff;
+  font-weight: 400;
+}
+
+/* ---------------------------------------------------- */
+/* ★★★ UX 기능: 분석 로딩 및 완료 피드백 (돋보기 애니메이션) ★★★ */
+/* ---------------------------------------------------- */
+
+/* 분석 로딩 오버레이 (화면 전체 덮기) */
+.analyze-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.98);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.5s;
+}
+
+.analyze-loading-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 돋보기 아이콘 (이미지 사용) */
+.loading-magnifier {
+  margin-bottom: 40px;
+  animation: pulseRotate 1.8s infinite ease-in-out;
+}
+
+.loading-magnifier-image {
+  width: 200px;
+  height: 200px;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 돋보기 펄스/회전 애니메이션 */
+@keyframes pulseRotate {
+  0% {
+    transform: scale(0.95) rotate(0deg);
+  }
+  30% {
+    transform: scale(1.1) rotate(60deg);
+  }
+  60% {
+    transform: scale(1.05) rotate(-60deg);
+  }
+  100% {
+    transform: scale(0.95) rotate(0deg);
+  }
+}
+
+/* 분석 완료 메시지 (🚀) */
+.analysis-complete-message {
+  font-size: 3em;
+  font-weight: 800;
+  color: #28a745;
+  opacity: 0;
+  transform: translateY(50px) scale(0.8);
+  text-shadow: 2px 2px 5px rgba(40, 167, 69, 0.3);
+}
+.analysis-complete-message.show {
+  animation: bounceInUp 0.8s forwards;
+  animation-delay: 0.1s;
+}
+@keyframes bounceInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ★★★ 결과 박스 슬라이드 인 효과 ★★★ */
+.analysis-result-box {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  padding: 25px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.analysis-result-box.slide-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---------------------------------------------------- */
+/* ★★★ CRUD 기능 피드백 오버레이 ★★★ */
+/* ---------------------------------------------------- */
+
+.crud-feedback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.98);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-out, visibility 0.3s;
+}
+
+.crud-feedback-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.feedback-content {
+  text-align: center;
+  background: transparent;
+  padding: 40px 60px;
+  box-shadow: none;
+  animation: none;
+}
+
+.feedback-icon {
+  font-size: 8em;
+  color: #343a40;
+  margin-bottom: 20px;
+  animation: generalPulse 1s infinite alternate ease-in-out;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 이미지 태그를 사용하는 경우 크기 조정 */
+.feedback-icon img {
+  width: 80px;
+  height: 80px;
+}
+
+.feedback-message {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: #343a40;
+}
+
+/* 일반 CRUD용 펄스 애니메이션 */
+@keyframes generalPulse {
+  from {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------- */
+/* 3. 재료 목록 섹션 (개별 카드 뷰) */
+/* ---------------------------------------------------- */
+
+.refrigerator-list-container {
+  padding: 0;
+}
+
+.ingredient-list-wrapper {
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+/* 열 너비 정의 */
+.analyze-checkbox-header,
+.analyze-checkbox-container {
+  width: 50px;
+  flex-shrink: 0;
+  text-align: center;
+  padding-right: 5px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.analyze-checkbox-container input[type="checkbox"] {
+  transform: scale(1);
+  margin: 0;
+}
+
+.ingredient-name-col {
+  width: 45%;
+  flex-shrink: 1;
+  font-weight: 500;
+  text-align: left;
+}
+
+.ingredient-list .ingredient-quantity-col {
+  width: 20%;
+  flex-shrink: 1;
+  text-align: right;
+  padding-right: 30px;
+  font-weight: 600;
+}
+
+.button-group-col {
+  width: 250px;
+  flex-shrink: 0;
+  min-width: 140px;
+  text-align: right;
+}
+
+/* 헤더 스타일 */
+.ingredient-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 25px 8px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9em;
+  border-radius: 6px 6px 0 0;
+  margin-top: 15px;
+}
+
+/* 헤더 내 수량 열 패딩 */
+.ingredient-header .ingredient-quantity-col {
+  width: 20%;
+  flex-shrink: 1;
+  text-align: right;
+  padding-right: 30px;
+}
+
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 목록 아이템 */
+.ingredient-list li {
+  display: flex;
+  align-items: center;
+  padding: 8px 25px;
+  margin-bottom: 8px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  line-height: 1.3;
+  min-height: 48px;
+}
+
+.ingredient-list li:hover {
+  background-color: #fcfcfd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.ingredient-list li:last-child {
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 0;
+}
+
+/* 재료 정보 영역 */
+.ingredient-info {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+
+/* ---------------------------------------------------- */
+/* 4. 목록 내 수정 폼 (인라인 편집) - 핵심 수정 부분 */
+/* ---------------------------------------------------- */
+
+.edit-inline-form {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  /* 💡 추가/수정: Flexbox가 목록 항목 전체 너비를 차지하도록 함 */
+  width: 100%;
+}
+
+/* 인라인 폼 내부 입력 필드의 스타일 */
+.edit-inline-form input {
+  padding: 4px 10px;
+  border: 1px solid #a8a8a8;
+  border-radius: 4px;
+  margin-right: 10px;
+  font-size: 0.95em;
+  box-sizing: border-box;
+  line-height: 1.2;
+  text-align: left;
+  transition: border-color 0.2s, transform 0.2s;
+  height: 32px; /* 버튼 높이와 맞추기 위해 높이 명시 */
+}
+
+.edit-inline-form input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+  transform: scale(1.01);
+}
+
+/* 인라인 수정 시 수량 입력 필드 내부 텍스트 및 패딩 조정 */
+.edit-inline-form .ingredient-quantity-col input {
+  text-align: right;
+  padding-right: 15px;
+  padding-left: 8px;
+}
+
+/* ---------------------------------------------------- */
+/* 5. 재료 추가 입력 폼 (섹션) */
+/* ---------------------------------------------------- */
+
+.add-ingredient-section {
+  padding-top: 30px;
+  border-top: 1px solid #e9ecef;
+  margin-top: 40px;
+}
+
+.add-form h3 {
+  margin-top: 0;
+  font-size: 1.3em;
+}
+
+.add-form-fields {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 15px;
+  align-items: flex-end;
+}
+
+.add-form-fields .form-group-inline {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.add-form-fields label {
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 70px;
+  color: #495057;
+}
+
+.add-form-fields input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.add-form-fields input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* ---------------------------------------------------- */
+/* 6. 버튼 스타일 공통 및 그룹 */
+/* ---------------------------------------------------- */
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.button-actions-top {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 25px;
+  margin-top: 30px;
+}
+
+.add-button-group {
+  gap: 10px;
+}
+
+/* 모든 버튼의 기본 스타일 */
+button {
+  cursor: pointer;
+  padding: 10px 18px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+/* 💡 [수정/강화] 인라인 폼 내부의 버튼 및 목록 항목 버튼의 미니멀 스타일 정의 */
+.ingredient-list li button,
+.edit-inline-form .button-group button {
+  /* 두 곳 모두 포함 */
+  padding: 4px 8px;
+  font-size: 0.75em;
+  min-width: 50px;
+  height: 32px; /* 버튼 높이 통일 */
+  line-height: 1.2; /* 텍스트 정렬 보정 */
+}
+
+/* 메인 (분석, 추가) 버튼 */
+.analyze-btn,
+.add-btn {
+  padding: 10px 20px;
+  font-size: 1em;
+  min-width: 80px;
+  color: #ffffff;
+  background-color: #343a40;
+  border: 1px solid #343a40;
+}
+
+.analyze-btn:hover,
+.add-btn:hover {
+  background-color: #495057;
+  border-color: #495057;
+}
+
+/* 분석 요청 버튼 (강조) - 인터랙션 강화 */
+.analyze-request-btn {
+  background-color: #007bff;
+  color: #ffffff;
+  border: 1px solid #007bff;
+  padding: 10px 20px;
+  font-size: 1em;
+  min-width: 80px;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.analyze-request-btn:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.analyze-request-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0, 123, 255, 0.5);
+}
+
+/* 수정, 저장 버튼 (세컨더리) */
+.edit-btn,
+.save-btn {
+  background-color: #ffffff;
+  color: #343a40;
+  border: 1px solid #343a40;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 삭제, 취소 버튼 (유령 버튼 스타일) */
+.delete-btn,
+.cancel-btn {
+  background-color: transparent;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+}
+
+.delete-btn:hover {
+  background-color: #fce7e7;
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.cancel-btn:hover {
+  background-color: #e9ecef;
+  color: #495057;
+  border-color: #adb5bd;
+}
+
+/* 비활성화된 버튼 */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f0f0f0 !important;
+  color: #adb5bd !important;
+  border-color: #e9ecef !important;
+  box-shadow: none;
+  transform: none;
+}
+
+/* 접근성: 포커스 스타일 추가 */
+button:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 3px;
+}
