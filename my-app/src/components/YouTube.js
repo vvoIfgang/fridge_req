@@ -1,9 +1,4 @@
-// src/components/YouTube.js
-
 import React, { useState, useEffect, useCallback } from "react";
-
-const YOUTUBE_API_KEY = "AIzaSyD-PKu8gliO_ISgVXixZc9yE2rGrKzO1bQ";
-const YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
 
 // 실제 API 키가 없을 때의 Mock 썸네일 생성 함수
 const getThumbnailUrl = (videoId) => {
@@ -15,49 +10,31 @@ function YouTube({ recipeName, videoCount }) {
   const [loading, setLoading] = useState(true);
 
   const fetchVideos = useCallback(async () => {
-    // ... (생략: 유효성 검사 로직) ...
-
-    if (!recipeName || !YOUTUBE_API_KEY || videoCount === 0) {
+    // 1. 유효성 검사: API 키 검사는 이제 백엔드가 하므로 프론트에서는 뺍니다.
+    if (!recipeName || videoCount === 0) {
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    const searchQuery = `${recipeName} 요리법`;
-
-    const params = new URLSearchParams({
-      part: "snippet",
-      q: searchQuery,
-      key: YOUTUBE_API_KEY,
-      maxResults: videoCount,
-      type: "video",
-      regionCode: "KR",
-    });
 
     try {
-      const url = `${YOUTUBE_SEARCH_URL}?${params.toString()}`;
-      const response = await fetch(url);
+      // 2. 백엔드 프록시 API로 요청 (검색어와 개수만 보냄)
+      // params 변수 만드는 과정이 필요 없어졌습니다.
+      const response = await fetch(
+        `/api/youtube/search?query=${encodeURIComponent(
+          recipeName
+        )}&count=${videoCount}`
+      );
 
-      // ... (생략: 오류 처리 로직) ...
-
-      const data = await response.json();
-
-      const videoData = data.items.map((item) => {
-        const videoId = item.id.videoId;
-        return {
-          id: videoId,
-          title: item.snippet.title,
-          link: `https://www.youtube.com/watch?v=${videoId}`,
-          // 썸네일 URL을 저장합니다.
-          thumbnail:
-            item.snippet.thumbnails?.default?.url || getThumbnailUrl(videoId),
-        };
-      });
+      const videoData = await response.json();
 
       setVideos(videoData);
     } catch (error) {
       console.error("YouTube API 통신 오류:", error);
+
       // 🚨 오류 발생 시 Mock 데이터로 대체
+      const searchQuery = `${recipeName} 요리법`;
       const mockData = Array.from({ length: videoCount }, (_, i) => ({
         id: `${recipeName.slice(0, 5)}-mock-${i}`,
         title: `[Mock] ${recipeName} 요리법 #${i + 1}`,
@@ -79,7 +56,7 @@ function YouTube({ recipeName, videoCount }) {
     fetchVideos();
   }, [fetchVideos]);
 
-  // ... (생략: 로딩 및 결과 없음 처리) ...
+  // ... (아래 렌더링 부분은 수정할 필요 없이 그대로 두시면 됩니다) ...
 
   if (loading) {
     return (
@@ -96,8 +73,6 @@ function YouTube({ recipeName, videoCount }) {
       </div>
     );
   }
-
-  // 🎯 [핵심 수정] videoCount=1일 때는 썸네일만, 3일 때는 썸네일+제목 목록
 
   // A. 요약 뷰 (썸네일만 크게 - videoCount = 1)
   if (videoCount === 1) {
