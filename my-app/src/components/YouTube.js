@@ -1,4 +1,6 @@
+// YouTube.jsx
 import React, { useState, useEffect, useCallback } from "react";
+import "../css/YouTube.css"; // ⭐ CSS 파일 임포트
 
 // 실제 API 키가 없을 때의 Mock 썸네일 생성 함수
 const getThumbnailUrl = (videoId) => {
@@ -10,7 +12,7 @@ function YouTube({ recipeName, videoCount }) {
   const [loading, setLoading] = useState(true);
 
   const fetchVideos = useCallback(async () => {
-    // 1. 유효성 검사: API 키 검사는 이제 백엔드가 하므로 프론트에서는 뺍니다.
+    // 1. 유효성 검사
     if (!recipeName || videoCount === 0) {
       setLoading(false);
       return;
@@ -20,7 +22,6 @@ function YouTube({ recipeName, videoCount }) {
 
     try {
       // 2. 백엔드 프록시 API로 요청 (검색어와 개수만 보냄)
-      // params 변수 만드는 과정이 필요 없어졌습니다.
       const response = await fetch(
         `/api/youtube/search?query=${encodeURIComponent(
           recipeName
@@ -56,22 +57,12 @@ function YouTube({ recipeName, videoCount }) {
     fetchVideos();
   }, [fetchVideos]);
 
-  // ... (아래 렌더링 부분은 수정할 필요 없이 그대로 두시면 됩니다) ...
-
   if (loading) {
-    return (
-      <div style={{ color: "#aaa", fontSize: "0.8em", textAlign: "center" }}>
-        영상 검색 중...
-      </div>
-    );
+    return <div className="video-loading">영상 검색 중...</div>;
   }
 
   if (videos.length === 0) {
-    return (
-      <div style={{ color: "#aaa", fontSize: "0.8em", textAlign: "center" }}>
-        연관 영상 없음
-      </div>
-    );
+    return <div className="no-video">연관 영상 없음</div>;
   }
 
   // A. 요약 뷰 (썸네일만 크게 - videoCount = 1)
@@ -82,12 +73,12 @@ function YouTube({ recipeName, videoCount }) {
         href={video.link}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ display: "block", width: "100%", height: "100%" }}
+        className="video-summary-view" // ⭐ 클래스 적용
       >
         <img
           src={video.thumbnail}
           alt={`${video.title} 썸네일`}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          className="summary-thumbnail-img" // ⭐ 클래스 적용
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = "https://via.placeholder.com/150x84?text=No+Image";
@@ -99,37 +90,26 @@ function YouTube({ recipeName, videoCount }) {
 
   // B. 상세 뷰 (썸네일 + 제목 목록 - videoCount = 3)
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-        width: "100%",
-      }}
-    >
+    <div className="video-list">
+      {" "}
+      {/* ⭐ 클래스 적용 */}
       {videos.map((video, index) => (
         <div
           key={video.id}
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: "8px",
-            borderBottom:
-              index < videos.length - 1 ? "1px dotted #eee" : "none",
-            paddingBottom: "3px",
-          }}
+          className="video-item" // ⭐ 클래스 적용
+          // ❌ 동적 스타일 제거됨. CSS의 :not(:last-child)가 처리함.
         >
           {/* 썸네일 영역 (작게) */}
           <a
             href={video.link}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ flexShrink: 0 }}
+            className="video-thumbnail-link" // ⭐ 클래스 적용
           >
             <img
               src={video.thumbnail}
               alt={`${video.title} 썸네일`}
-              style={{ width: "80px", height: "60px", objectFit: "cover" }}
+              className="video-thumbnail-img" // ⭐ 클래스 적용
               onError={(e) => {
                 e.target.onerror = null;
                 e.target.src = "https://via.placeholder.com/80x60?text=No+Img";
@@ -142,12 +122,7 @@ function YouTube({ recipeName, videoCount }) {
             href={video.link}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              fontSize: "0.85em",
-              color: "#007bff",
-              textDecoration: "none",
-              lineHeight: 1.3,
-            }}
+            className="video-title-link" // ⭐ 클래스 적용
           >
             {index + 1}. {video.title}
           </a>

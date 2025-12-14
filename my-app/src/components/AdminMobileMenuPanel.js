@@ -63,8 +63,18 @@ function AdminMobileMenuPanel({
                   </Link>
                 </li>
                 <li>
-                  <Link to="/admin" onClick={handleLinkClick}>
-                    🛠️ 관리자 대시보드
+                  <Link to="/userlist" onClick={handleLinkClick}>
+                    사용자 목록 관리
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/userdetail" onClick={handleLinkClick}>
+                    사용자 정보 관리
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/usersign" onClick={handleLinkClick}>
+                    사용자 계정 관리
                   </Link>
                 </li>
                 <hr />

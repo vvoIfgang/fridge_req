@@ -122,7 +122,7 @@ function Header() {
                 <span className="user-id-display">
                   {userName} 님
                   {isAdmin && (
-                    <span style={{ color: "red", marginLeft: "5px" }}>(A)</span>
+                    <span style={{ color: "red", marginLeft: "5px" }}></span>
                   )}
                 </span>
                 <FaRegUserCircle className="profile-icon" size={24} />

@@ -25,13 +25,18 @@ function AdminMenu({ username, logout, closeMenu }) {
           </Link>
         </li>
         <li>
-          <Link to="/admin" onClick={handleLinkClick}>
-            관리자 페이지
+          <Link to="/userlist" onClick={handleLinkClick}>
+            사용자 목록 관리
           </Link>
         </li>
         <li>
-          <Link to="/fridge" onClick={handleLinkClick}>
-            나의 냉장고
+          <Link to="/userdetail" onClick={handleLinkClick}>
+            사용자 정보 조회
+          </Link>
+        </li>
+        <li>
+          <Link to="/usersign" onClick={handleLinkClick}>
+            사용자 계정 관리
           </Link>
         </li>
       </ul>

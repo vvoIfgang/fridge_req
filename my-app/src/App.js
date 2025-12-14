@@ -22,8 +22,10 @@ import Profile from "./components/Profile";
 import Myfridge from "./components/Myfridge";
 import Myrecipes from "./components/Myrecipes";
 import Preferrecipes from "./components/Preferrecipes";
-import Admin from "./components/Admin";
 import ChatBot from "./components/ChatBot";
+import UserList from "./components/UserList";
+import UserDetail from "./components/UserDetail";
+import UserSign from "./components/UserSign";
 
 function App() {
   return (
@@ -51,8 +53,10 @@ function App() {
             <Route path="/fridge" element={<Myfridge />} />
             <Route path="/myrecipes" element={<Myrecipes />} />
             <Route path="/preferrecipes" element={<Preferrecipes />} />
-            <Route path="/admin" element={<Admin />} />
             <Route path="/chatbot" element={<ChatBot />} />
+            <Route path="/userlist" element={<UserList />} />
+            <Route path="/userdetail" element={<UserDetail />} />
+            <Route path="/usersign" element={<UserSign />} />
           </Routes>
         </div>
       </AuthProvider>{" "}
