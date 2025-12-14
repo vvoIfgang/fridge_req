@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/static/css/main.b3ef80a1.css",
+    "main.js": "/static/js/main.823a868b.js",
+    "static/js/317.989442eb.chunk.js": "/static/js/317.989442eb.chunk.js",
+    "static/media/chicken soup.jpg": "/static/media/chicken soup.cfbaa3271300a460fcab.jpg",
+    "static/media/About.jpg": "/static/media/About.8c866eeb75d697c3f2c2.jpg",
+    "static/media/chicken.avif": "/static/media/chicken.f26e71254035536c311f.avif",
+    "static/media/kim.jpg": "/static/media/kim.20b3d77ef098028367af.jpg",
+    "static/media/Li.png": "/static/media/Li.0d8ef9db2c8e0e2beccd.png",
+    "static/media/ko.jpg": "/static/media/ko.78379a09a993cd58fe70.jpg",
+    "static/media/stake.avif": "/static/media/stake.7b0afbb2c6a4c79ac0b7.avif",
+    "static/media/service.jpg": "/static/media/service.6572201f1f3254481fbb.jpg",
+    "static/media/intro.jpeg": "/static/media/intro.3a0bed87084cf6f1ac18.jpeg",
+    "static/media/pizza.jpg": "/static/media/pizza.1fabae84030991d89748.jpg",
+    "static/media/nutrition.jpg": "/static/media/nutrition.26a7362623efdacbd725.jpg",
+    "static/media/recipe.avif": "/static/media/recipe.fa7c3d2f59fe63b9d322.avif",
+    "static/media/correction.png": "/static/media/correction.60df6ad933267a6f61f6.png",
+    "static/media/Gemini.webp": "/static/media/Gemini.a893669a2b1b71b84ca9.webp",
+    "static/media/add.png": "/static/media/add.4ea00710561375bd9840.png",
+    "static/media/delete.png": "/static/media/delete.32b81934e63e1b3f4aa2.png",
+    "index.html": "/index.html",
+    "main.b3ef80a1.css.map": "/static/css/main.b3ef80a1.css.map",
+    "main.823a868b.js.map": "/static/js/main.823a868b.js.map",
+    "317.989442eb.chunk.js.map": "/static/js/317.989442eb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b3ef80a1.css",
+    "static/js/main.823a868b.js"
+  ]
+}

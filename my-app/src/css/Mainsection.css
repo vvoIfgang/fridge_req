@@ -1,0 +1,142 @@
+/* src/css/Herosection.css */
+
+/* ---------------------------------------------------- */
+/* 1. 기본 영웅 섹션 컨테이너 및 이미지 래퍼 */
+/* ---------------------------------------------------- */
+.hero-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-image-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(60%);
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* ---------------------------------------------------- */
+/* 2. 중앙 텍스트 오버레이 */
+/* ---------------------------------------------------- */
+.hero-text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  text-align: center;
+  /* 💡 z-index: 10; 제거 - 메뉴의 z-index에 의존하여 깔끔하게 처리 */
+  width: 90%;
+}
+
+.hero-text-overlay h1 {
+  font-size: 3rem; /* PC 기준 */
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-text-overlay p {
+  font-size: 1.2rem; /* PC 기준 */
+  margin-bottom: 2rem;
+}
+
+.view-menu-btn {
+  background-color: #ffda79;
+  color: #333;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-menu-btn:hover {
+  background-color: #ffc241;
+}
+
+/* ---------------------------------------------------- */
+/* 3. 이미지 네비게이션 버튼 (슬라이더) */
+/* ---------------------------------------------------- */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 2rem;
+  /* 💡 z-index: 15; 제거 */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.prev-btn {
+  left: 20px;
+}
+
+.next-btn {
+  right: 20px;
+}
+
+/* ---------------------------------------------------- */
+/* 4. 모바일 반응형 스타일 (Mobile Responsive) */
+/* ---------------------------------------------------- */
+@media screen and (max-width: 768px) {
+  /* 텍스트 오버레이 크기 조정 */
+  .hero-text-overlay h1 {
+    font-size: 2rem; /* h1 폰트 크기 축소 */
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-text-overlay p {
+    font-size: 1rem; /* p 폰트 크기 축소 */
+    margin-bottom: 1.5rem;
+  }
+
+  /* 버튼 크기 조정 */
+  .view-menu-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  /* 네비게이션 버튼 크기 및 위치 조정 */
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem; /* 화살표 크기 축소 */
+  }
+
+  .prev-btn {
+    left: 10px; /* 가장자리 간격 축소 */
+  }
+
+  .next-btn {
+    right: 10px; /* 가장자리 간격 축소 */
+  }
+}
