@@ -103,17 +103,23 @@ exports.updateIngredient = async (req, res) => {
   }
 };
 
-exports.analye = async (req, res) => {
+exports.analyze = async (req, res) => {
   const { ingredients } = req.body;
-
+  console.log("분석시작함", ingredients);
   if (!ingredients || ingredients.length === 0) {
     return res.status(400).json({ message: "분석할 재료가 없습니다" });
   }
 
   try {
-    const ingredientString = ingredients.map((i) => i.name).json(",");
+    const ingredientString = ingredients.map((i) => i.name).join(",");
     const pythonScriptPath = path.join(__dirname, "../../ai/ai_model.py");
-    const pythonProcess = spawn("python", [pythonScriptPath, ingredientString]);
+    const pythonProcess = spawn(
+      "python",
+      [pythonScriptPath, ingredientString],
+      {
+        env: { ...process.env, PYTHONIOENCODING: "utf-8" },
+      }
+    );
 
     let dataString = "";
     let errorString = "";
@@ -136,7 +142,27 @@ exports.analye = async (req, res) => {
       }
 
       try {
-        const resultJson = JSON.parse(dataString);
+        const jsonStartIndex = dataString.indexOf("{");
+        const jsonEndIndex = dataString.lastIndexOf("}");
+
+        if (jsonStartIndex === -1 || jsonEndIndex === -1) {
+          throw new Error("JSON 형식을 찾을 수 없습니다.");
+        }
+
+        const cleanJsonString = dataString.substring(
+          jsonStartIndex,
+          jsonEndIndex + 1
+        );
+        const resultJson = JSON.parse(cleanJsonString);
+        if (resultJson.status === "error") {
+          console.error("🐍 Python Script Error:", resultJson.message);
+          return res.status(500).json({
+            status: "error",
+            message: "AI 모델 내부 오류",
+            details: resultJson.message,
+          });
+        }
+        console.log("✅ 분석 성공:", resultJson.dish_name);
         res.json(resultJson);
       } catch (parseError) {
         console.error(
@@ -155,6 +181,7 @@ exports.analye = async (req, res) => {
     console.error("Analysis Controller Error:", err);
     res.status(500).json({ message: "서버 내부 에러" });
   }
+  console.log("분석 종료");
 };
 //프로필 조회
 exports.getProfile = async (req, res) => {
