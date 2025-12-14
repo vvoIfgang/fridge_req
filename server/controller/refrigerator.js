@@ -1,4 +1,6 @@
 const pool = require("../sql/connDB");
+const { spawn } = require("child_process");
+const path = require("path");
 
 exports.getIngredient = async (req, res) => {
   const userId = req.user.id;
@@ -101,6 +103,59 @@ exports.updateIngredient = async (req, res) => {
   }
 };
 
+exports.analye = async (req, res) => {
+  const { ingredients } = req.body;
+
+  if (!ingredients || ingredients.length === 0) {
+    return res.status(400).json({ message: "분석할 재료가 없습니다" });
+  }
+
+  try {
+    const ingredientString = ingredients.map((i) => i.name).json(",");
+    const pythonScriptPath = path.join(__dirname, "../../ai/ai_model.py");
+    const pythonProcess = spawn("python", [pythonScriptPath, ingredientString]);
+
+    let dataString = "";
+    let errorString = "";
+
+    pythonProcess.stdout.on("data", (data) => {
+      dataString += data.toString();
+    });
+
+    pythonProcess.stderr.on("data", (data) => {
+      errorString += data.toString();
+    });
+
+    pythonProcess.on("close", (code) => {
+      if (code !== 0) {
+        console.error("python error: ", errorString);
+        return res.status(500).json({
+          status: "error",
+          message: "AI 모델 실행 중 오류가 발생했습니다",
+        });
+      }
+
+      try {
+        const resultJson = JSON.parse(dataString);
+        res.json(resultJson);
+      } catch (parseError) {
+        console.error(
+          "JSON Prase error : ",
+          parseError,
+          "Raw Data : ",
+          dataString
+        );
+        res.status(500).json({
+          status: "error",
+          message: "AI 응답을 처리하는데 실패했습니다",
+        });
+      }
+    });
+  } catch (err) {
+    console.error("Analysis Controller Error:", err);
+    res.status(500).json({ message: "서버 내부 에러" });
+  }
+};
 //프로필 조회
 exports.getProfile = async (req, res) => {
   const userIdParam = req.params.userId;
