@@ -81,14 +81,15 @@ const UserList = () => {
               <th>사용자 이름</th>
               <th>현재 역할</th>
               <th>상태</th>
-              {/* ❌ '가입일' 및 '관리 액션' 열 제거됨 */}
+              <th>가입일</th>
+              <th>최근 로그인</th>
             </tr>
           </thead>
           <tbody>
             {users.length === 0 ? (
               <tr>
-                {/* colSpan을 5로 설정 */}
-                <td colSpan="5">등록된 사용자가 없습니다.</td>
+                {/* colSpan을 7로 설정 */}
+                <td colSpan="7">등록된 사용자가 없습니다.</td>
               </tr>
             ) : (
               users.map((user) => (
@@ -98,7 +99,8 @@ const UserList = () => {
                   <td>{user.userName}</td>
                   <td>{user.role}</td>
                   <td>{user.status || "활성"}</td>
-                  {/* ❌ '가입일' 및 '관리 액션' 데이터 렌더링 제거됨 */}
+                  <td>{user.created_at}</td>
+                  <td>{user.last_login}</td>
                 </tr>
               ))
             )}
