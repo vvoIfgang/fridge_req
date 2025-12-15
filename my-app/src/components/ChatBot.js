@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../css/ChatBot.css";
 // ✅ 리팩토링: useApi 훅을 가져옵니다.
-import useApi from "../hooks/useApi";
+import useApi from "../hook/useApi";
 
 // =========================================================
 // 1. 챗봇 API 호출 로직 (useApi 훅을 통해 간소화)
@@ -170,3 +170,4 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
