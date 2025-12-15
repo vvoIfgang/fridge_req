@@ -1,5 +1,3 @@
-// src/components/MyRecipes.js (실제 DB 연동 버전)
-
 import React, { useState, useEffect, useCallback } from "react";
 import useApi from "../hook/useApi";
 import "../css/Myfridge.css"; // 기본 CSS 사용
@@ -11,20 +9,17 @@ function MyRecipes() {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [expandedRecipeId, setExpandedRecipeId] = useState(null); // 🎯 현재 상세 정보가 펼쳐진 레시피의 ID를 저장합니다.
 
-  // 🎯 현재 상세 정보가 펼쳐진 레시피의 ID를 저장합니다.
-  const [expandedRecipeId, setExpandedRecipeId] = useState(null);
-
-  // 🎯 1. DB에서 레시피 목록을 조회하는 로직 (GET) - 💡 AI 스키마 모든 필드 매핑 포함
+  // 🎯 1. DB에서 레시피 목록을 조회하는 로직 (GET) - 💡 조리법을 description에 통합
   const fetchRecipes = useCallback(async () => {
     setIsLoading(true);
     setMessage("저장된 AI 추천 조리법 목록을 불러오는 중...");
 
     try {
       // 서버에서 DB에 저장된 분석 결과/추천 레시피 목록을 조회합니다.
-      const response = await api.get(`/api/recipes/list`);
+      const response = await api.get(`/api/recipes/list`); // 서버 응답 형태에 따라 데이터를 매핑합니다.
 
-      // 서버 응답 형태에 따라 데이터를 매핑합니다.
       const mappedRecipes = Array.isArray(response)
         ? response.map((item) => {
             const ingredientsArray =
@@ -33,11 +28,14 @@ function MyRecipes() {
             return {
               id: item.id,
               name: item.recipeName || item.dish_name,
-              description: item.recipeDescription || item.description,
-              time: item.time || "정보 없음", // AI 스키마에 없는 필드는 기본값 설정
-              steps: item.steps || item.recipeDescription || item.description, // AI 스키마에 없는 필드는 description 대체
 
-              // 💡 [핵심 수정 1]: AI 스키마의 모든 필드를 상태에 명시적으로 저장
+              description:
+                item.steps ||
+                item.recipeDescription ||
+                item.description ||
+                "상세 조리법 정보 없음",
+              time: item.time || "정보 없음", // 💡 [핵심 수정 1]: AI 스키마의 모든 필드를 상태에 명시적으로 저장
+
               category: item.meta_info?.category || "정보 없음",
               recommend: item.meta_info?.recommend || "정보 없음",
               taste: item.meta_info?.taste || "정보 없음",
@@ -86,15 +84,12 @@ function MyRecipes() {
       // 필수 필드
       dish_name: recipe.name,
       description: recipe.description,
-
-      // 메타 정보 (meta_info 스키마 구조에 맞게)
       meta_info: {
         category: recipe.category,
         recommend: recipe.recommend,
         taste: recipe.taste,
         ...recipe.originalMeta, // 원본에서 가져온 다른 메타 정보가 있다면 포함
       },
-
       // 재료 정보 (ingredients 스키마 구조에 맞게)
       ingredients: {
         main: recipe.originalIngredients || [], // 배열 형태의 재료를 사용
@@ -172,7 +167,6 @@ function MyRecipes() {
                       <h3 style={{ margin: "0", flexGrow: 1 }}>
                         {recipe.name}
                       </h3>
-
                       {/* 카테고리 및 선호도 요약 표시 */}
                       <div className="recipe-meta-summary">
                         <span className="recipe-category">
@@ -182,7 +176,6 @@ function MyRecipes() {
                           ⭐ 선호도: {recipe.recommend}점
                         </span>
                       </div>
-
                       {/* 🎯 [YouTube 연결] 1개 영상 요청 (썸네일) */}
                       <div className="youtube-thumbnail-container">
                         <YouTube recipeName={recipe.name} videoCount={1} />
@@ -220,24 +213,22 @@ function MyRecipes() {
                       {/* 상세 메타 정보 (카테고리, 선호도, 맛) */}
                       <div className="recipe-meta-detail">
                         <p>
-                          ✔️ 카테고리: <strong>{recipe.category}</strong>
+                          카테고리: <strong>{recipe.category}</strong>
                         </p>
                         <p>
-                          ✔️ 선호도: <strong>{recipe.recommend}점</strong>
+                          선호도: <strong>{recipe.recommend}점</strong>
                         </p>
                         <p>
-                          ✔️ 주요 맛: <strong>{recipe.taste}</strong>
+                          주요 맛: <strong>{recipe.taste}</strong>
                         </p>
                       </div>
 
                       {/* 조리법 및 시간 */}
                       <p className="recipe-time-info">
-                        ✔️ 조리 시간: {recipe.time || "정보 없음"}
+                        조리 시간: {recipe.time || "정보 없음"}
                       </p>
-                      <p className="recipe-steps-info">
-                        {recipe.steps || recipe.description}
-                      </p>
-
+                      {/* 💡 [수정 2]: 조리법(steps) 대신 description을 표시 */}
+                      <p className="recipe-steps-info">{recipe.description}</p>
                       <hr style={{ margin: "15px 0" }} />
 
                       {/* 🎯 [YouTube 연결] 3개 영상 요청 */}
@@ -260,11 +251,8 @@ function MyRecipes() {
           </ul>
         )}
       </div>
-
-      <hr />
     </div>
   );
 }
 
 export default MyRecipes;
-
