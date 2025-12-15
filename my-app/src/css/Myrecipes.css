@@ -1,0 +1,81 @@
+/* src/css/Myrecipes.css */
+
+/* MyRecipes 컴포넌트 내부에서만 사용될 스타일 */
+
+/* ----------------------------------- */
+/* 1. 레시피 목록 컨테이너 스타일 */
+/* ----------------------------------- */
+
+.recipe-list-container {
+  padding: 10px 0;
+}
+
+/* ----------------------------------- */
+/* 2. 레시피 목록 아이템 스타일 (Myfridge.css의 li 스타일을 덮어쓰거나 확장) */
+/* ----------------------------------- */
+
+.recipe-list-container .ingredient-list li {
+  /* Myfridge.css에서 상속받은 display: flex, align-items: center */
+  flex-direction: column;
+  align-items: flex-start;
+  /* ⭐ 데스크톱: 오른쪽 버튼/추가 아이콘 공간 확보 ⭐ */
+  padding-right: 150px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.recipe-list-container .ingredient-list li h3 {
+  margin-bottom: 5px;
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+/* ----------------------------------- */
+/* 3. 선호 레시피 추가 버튼/아이콘 스타일 */
+/* ----------------------------------- */
+
+.favorite-toggle-btn {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  padding: 8px 10px;
+  background-color: transparent;
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+  z-index: 10; /* 다른 요소 위에 표시되도록 z-index 추가 */
+}
+
+.favorite-toggle-btn:hover {
+  background-color: #fffbe6;
+}
+
+/* 이미 선호 목록에 추가된 상태 (체크된 상태) */
+.favorite-toggle-btn.is-favorited {
+  background-color: #ffd700;
+  color: #ffffff;
+}
+
+/* ----------------------------------- */
+/* 4. 모바일 최적화 (600px 이하) */
+/* ----------------------------------- */
+
+@media (max-width: 600px) {
+  .recipe-list-container .ingredient-list li {
+    /* 모바일에서는 세로로 이미 쌓여 있으므로 flex-direction: column; 유지 */
+    /* 오른쪽 패딩을 줄여 공간 확보 */
+    padding-right: 20px;
+  }
+
+  .favorite-toggle-btn {
+    /* 모바일에서 버튼 크기 조정 및 위치 유지 */
+    padding: 5px 8px;
+    font-size: 0.8em;
+    right: 10px;
+    top: 10px;
+  }
+}
