@@ -22,12 +22,10 @@ exports.chatbot = async (req, res) => {
     } else {
       ingredientList = "냉장고가 비어있음";
     }
-  } catch (dbErr) {
-    console.error("DB error : ", dbErr);
-  } finally {
-    conn.release();
-  }
-  const prompt = `
+    if (conn) {
+      conn.release();
+    }
+    const prompt = `
       너는 창의적이고 친절한 전문 셰프야.
       
       [사용자 상황]
@@ -41,16 +39,22 @@ exports.chatbot = async (req, res) => {
       4. 너무 길지 않게 핵심 레시피와 팁을 포함해줘.
     `;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text();
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
-  console.log("챗봇 입력 완료");
+    console.log("챗봇 입력 완료");
 
-  res.json({ response: text });
-  if (err) {
-    console.error("챗봇 에러 : ", err);
-    res.status(500).json({ error: "챗봇이 응답을 생성하는 중 문제가 발생함" });
+    res.json({ response: text });
+    if (err) {
+      console.error("챗봇 에러 : ", err);
+      res
+        .status(500)
+        .json({ error: "챗봇이 응답을 생성하는 중 문제가 발생함" });
+    }
+  } catch {
+    console.error("챗봇 프로세스 에러 : ", err);
+    res.status(500).json({ error: "챗봇 응답 생성 중 오류 발생" });
   }
 };
