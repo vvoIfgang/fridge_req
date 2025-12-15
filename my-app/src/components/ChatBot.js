@@ -9,6 +9,12 @@ import useApi from "../hooks/useApi";
 // 1. 챗봇 API 호출 로직 (useApi 훅을 통해 간소화)
 // =========================================================
 
+/**
+ * 백엔드 스크립트 엔드포인트로 사용자 메시지를 전송하고 Gemini의 답변을 받습니다.
+ * @param {Function} apiPost useApi 훅에서 반환된 post 함수
+ * @param {string} userMessage 사용자가 입력한 메시지
+ * @returns {Promise<string>} 챗봇의 응답 텍스트 (레시피)
+ */
 const realChatAPI = async (apiPost, userMessage) => {
   // useApi 훅이 Authorization 헤더와 토큰 갱신/재시도를 모두 처리합니다.
   const API_ENDPOINT = "/api/chatbot/recipe";
