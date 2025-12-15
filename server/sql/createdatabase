@@ -5,6 +5,18 @@ CREATE TABLE IF NOT EXISTS userinfo(
     userName VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'user'
 );
+
+-- 1. 가입일 컬럼 추가 (기본값: 현재 시간)
+ALTER TABLE userinfo 
+ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+-- 2. 마지막 로그인 컬럼 추가 (기본값: NULL, 로그인 할 때마다 갱신)
+ALTER TABLE userinfo 
+ADD COLUMN last_login DATETIME DEFAULT NULL;
+
+-- 사용자 상태 컬럼 추가 (기본값: 'active')
+ALTER TABLE userinfo ADD COLUMN status VARCHAR(20) DEFAULT 'active';
+
 CREATE TABLE IF NOT EXISTS refreshToken (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId INT NOT NULL,
@@ -19,3 +31,19 @@ CREATE TABLE IF NOT EXISTS ingredient(
     quantity VARCHAR(50) NOT NULL,
     FOREIGN KEY (userId) REFERENCES userinfo(id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS recipes(
+    recipeId INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT NOT NULL,
+    recipeName VARCHAR(255) NOT NULL,
+    description TEXT,
+    isFavorite BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (userId) REFERENCES userinfo(id) ON DELETE CASCADE
+)
+
+CREATE TABLE recipeIngredients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    recipeId INT NOT NULL,
+    ingredientName VARCHAR(100),
+    FOREIGN KEY (recipeId) REFERENCES recipes(recipeId) ON DELETE CASCADE
+);
+

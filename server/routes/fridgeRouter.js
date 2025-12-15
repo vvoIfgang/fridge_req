@@ -13,8 +13,6 @@ router.put("/update", verifyToken, fridgeController.updateIngredient);
 
 router.post("/analyze", verifyToken, fridgeController.analyze);
 
-router.get("/profile/:userId", verifyToken, fridgeController.getProfile);
-
-router.put("/profile/:userId", verifyToken, fridgeController.updateProfile);
+router.post("/save", verifyToken, fridgeController.saveRecipe);
 
 module.exports = router;

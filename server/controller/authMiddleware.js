@@ -17,3 +17,11 @@ exports.verifyToken = (req, res, next) => {
     next(); // 다음 단계(Controller)로 통과
   });
 };
+
+exports.verifyAdmin = (req, res, next) => {
+  // verifyToken을 먼저 통과해야 req.user가 있음
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: "관리자 권한이 없습니다." });
+  }
+  next();
+};

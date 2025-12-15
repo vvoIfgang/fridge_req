@@ -11,10 +11,16 @@ app.use(express.static(path.join(__dirname, "../my-app/build")));
 const authRoute = require("./routes/authlogin");
 const fridgeRoute = require("./routes/fridgeRouter");
 const youtubeRoute = require("./routes/youtubeRouter");
+const recipeRoute = require("./routes/recipesRouter");
+const adminRouter = require("./routes/adminRouter");
+const profileRouter = require("./routes/profileRouter");
 
 app.use("/api/fridge", fridgeRoute);
 app.use("/api/auth", authRoute); //api 요청 /api/auth/login, /api/auth/register
 app.use("/api/youtube", youtubeRoute);
+app.use("/api/recipes", recipeRoute);
+app.use("/api/admin", adminRouter);
+app.use("/api/mypage", profileRouter);
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT} 에서 서버 실행중`);
 });

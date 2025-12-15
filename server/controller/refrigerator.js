@@ -181,57 +181,42 @@ exports.analyze = async (req, res) => {
     console.error("Analysis Controller Error:", err);
     res.status(500).json({ message: "서버 내부 에러" });
   }
-  console.log("분석 종료");
 };
-//프로필 조회
-exports.getProfile = async (req, res) => {
-  const userIdParam = req.params.userId;
+
+exports.saveRecipe = async (req, res) => {
+  const userId = req.user.id;
+  const { dish_name, input_ingredients } = req.body;
 
   let conn;
   try {
     conn = await pool.getConnection();
-    const sql = "SELECT userId, userName FROM userinfo WHERE userId = ?";
-    const rows = await conn.query(sql, [userIdParam]);
+    const result = await conn.query(
+      "INSERT INTO recipes (userId,recipeName) VALUES (?, ?)",
+      [userId, dish_name]
+    );
+    const recipeId = result.insertId;
 
-    if (rows.length === 0)
-      return res.status(404).json({ message: "사용자 없음" });
+    if (input_ingredients) {
+      const ingArray = input_ingredients.split(",").map((s) => s.trim());
+      const sqlIng =
+        "INSERT INTO recipeIngredients (recipeId,ingredientName) VALUES (?, ?)";
 
-    res.json({ userId: rows[0].userId, userName: rows[0].userName });
-  } catch (err) {
-    res.status(500).json({ message: "서버 에러" });
-  } finally {
-    if (conn) conn.release();
-  }
-};
-
-// [신규] 프로필 수정
-exports.updateProfile = async (req, res) => {
-  const userIdParam = req.params.userId;
-  const { userName, newPassword } = req.body;
-
-  let conn;
-  try {
-    conn = await pool.getConnection();
-
-    if (newPassword) {
-      // 비밀번호 변경 시 암호화
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await conn.query(
-        "UPDATE userinfo SET userName = ?, userPw = ? WHERE userId = ?",
-        [userName, hashedPassword, userIdParam]
-      );
-    } else {
-      // 이름만 변경 시
-      await conn.query("UPDATE userinfo SET userName = ? WHERE userId = ?", [
-        userName,
-        userIdParam,
-      ]);
+      for (const ingName of ingArray) {
+        if (ingName) {
+          await conn.query(sqlIng, [recipeId, ingName]);
+        }
+      }
     }
-
-    res.json({ message: "수정 완료" });
+    res.status(201).json({
+      message: "저장 완료",
+      recipeId: Number(recipeId),
+    });
   } catch (err) {
-    res.status(500).json({ message: "수정 에러" });
+    console.error(err);
+    res.status(500).json({ message: "저장 실패" });
   } finally {
-    if (conn) conn.release();
+    if (conn) {
+      conn.release();
+    }
   }
 };

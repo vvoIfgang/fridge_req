@@ -58,6 +58,9 @@ exports.login = async (req, res) => {
     if (!comparePw) {
       return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
     }
+    const updateLoginTimeSql =
+      "UPDATE userinfo SET last_login = NOW() WHERE id = ?";
+    await conn.query(updateLoginTimeSql, [user.id]);
     //비밀번호가 맞을 경우 토큰 발급해줌
     const accessToken = jwt.sign(
       { id: user.id, userId: user.userId, role: user.role },
