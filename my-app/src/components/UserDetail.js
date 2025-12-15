@@ -135,6 +135,14 @@ const UserDetail = () => {
                     <th>계정 상태</th>
                     <td>{user.status || "활성"}</td>
                   </tr>
+                  <tr>
+                    <th>가입일</th>
+                    <td>{user.created_at}</td>
+                  </tr>
+                  <tr>
+                    <th>최근 로그인</th>
+                    <td>{user.last_login}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
