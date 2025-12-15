@@ -52,7 +52,7 @@ function MyRefrigerator() {
       const response = await api.get(`/api/fridge`);
       let rawData = Array.isArray(response)
         ? response
-        : response.ingredient || []; // 💡 수정: rawData를 순회하며 ingreName을 name으로 매핑합니다.
+        : response.ingredient || [];
 
       const mappedData = rawData.map((item) => ({
         id: item.id,
@@ -92,8 +92,7 @@ function MyRefrigerator() {
     setIsAdding(false);
 
     if (item) {
-      setEditingId(item.id);
-      // 💡 수정: item에서 name 필드를 가져와 formData.name에 저장
+      setEditingId(item.id); // 💡 수정: item에서 name 필드를 가져와 formData.name에 저장
       setFormData({ name: item.name, quantity: item.quantity });
     } else {
       setIsAdding(true);
@@ -104,8 +103,8 @@ function MyRefrigerator() {
   // 8. 💾 재료 추가/수정 로직 (POST/PUT) - 애니메이션 통합
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // 💡 수정: formData에서 name 필드를 사용
+
     const { name, quantity } = formData;
     const trimmedName = name.trim();
 
@@ -126,7 +125,6 @@ function MyRefrigerator() {
     setFeedbackIcon(iconKey);
     setFeedbackMessage(processingMsg);
     // --- ---------------------------------- ---
-
     // 💡 수정: 서버 API가 'name' 필드를 기대하므로, payload는 { name, quantity }로 유지
     const payload = { name: trimmedName, quantity };
     let finalMessage = "";
@@ -134,9 +132,8 @@ function MyRefrigerator() {
     try {
       if (editingId) {
         // 수정 로직
-        await api.put(`/api/fridge/update`, { ...payload, id: editingId });
+        await api.put(`/api/fridge/update`, { ...payload, id: editingId }); // 프론트엔드 상태도 name 필드로 업데이트
 
-        // 프론트엔드 상태도 name 필드로 업데이트
         const updatedIngredients = ingredient.map((item) =>
           item.id === editingId
             ? { ...item, name: trimmedName, quantity }
@@ -147,9 +144,8 @@ function MyRefrigerator() {
         setEditingId(null);
       } else {
         // 추가 로직
-        const response = await api.post(`/api/fridge/add`, payload);
+        const response = await api.post(`/api/fridge/add`, payload); // 프론트엔드 상태는 name 필드로 저장
 
-        // 프론트엔드 상태는 name 필드로 저장
         const newItem = {
           id: response.id || Date.now(),
           name: trimmedName,
@@ -175,8 +171,8 @@ function MyRefrigerator() {
       // --- ------------------------------------------ ---
     } catch (error) {
       console.error(editingId ? "Update Error:" : "Add Error:", error);
-
       // --- 에러 시 애니메이션 종료 및 메시지 표시 ---
+
       setIsFeedbackActive(false);
       setIsLoading(false);
       setMessage(`❌ ${editingId ? "수정" : "추가"} 실패: ${error.message}`);
@@ -190,7 +186,6 @@ function MyRefrigerator() {
     if (!window.confirm(`정말로 '${name}'을/를 삭제하시겠습니까?`)) {
       return;
     }
-
     // --- 1단계: 애니메이션 시작 (로딩 상태) ---
     const completionTime = 0;
 
@@ -199,7 +194,6 @@ function MyRefrigerator() {
     setFeedbackIcon("Delete");
     setFeedbackMessage(`'${name}' 삭제 요청 중...`);
     // --- ---------------------------------- ---
-
     let finalMessage = "";
 
     try {
@@ -221,8 +215,8 @@ function MyRefrigerator() {
       // --- ------------------------------------------ ---
     } catch (error) {
       console.error("Delete Error:", error);
-
       // --- 에러 시 애니메이션 종료 및 메시지 표시 ---
+
       setIsFeedbackActive(false);
       setIsLoading(false);
       setMessage(`❌ 재료 삭제 실패: ${error.message}`);
@@ -257,12 +251,10 @@ function MyRefrigerator() {
       setTimeout(() => setMessage(""), 3000);
       return;
     }
-
     // --- 1단계: 분석 애니메이션 시작 ---
     setIsLoading(true);
     setIsAnalyzeLoading(true);
     // --- -------------------------- ---
-
     // 💡 수정: item.name을 사용하여 { name: name } 구조로 서버에 전송 (서버 규격 유지)
     const ingredientsToSend = ingredient
       .filter((item) => selectedIngredients.includes(item.id))
@@ -271,39 +263,57 @@ function MyRefrigerator() {
     const payload = { ingredients: ingredientsToSend };
 
     try {
-      const response = await api.post(`/api/fridge/analyze`, payload);
+      // 1. AI 분석 요청 (API: /api/fridge/analyze)
+      const analysisResponse = await api.post(`/api/fridge/analyze`, payload);
 
-      // --- 2단계: 분석 완료 애니메이션으로 전환 (2000ms 분석 시간 시뮬레이션) ---
-      setTimeout(() => {
+      // 분석 성공 및 유효한 결과 확인
+      if (
+        analysisResponse &&
+        analysisResponse.status === "success" &&
+        analysisResponse.dish_name
+      ) {
+        setLastAnalyzedResult(analysisResponse); // 상태 유지를 위해 저장
+
+        // 2. 분석 결과를 DB에 저장 요청 (API: /api/fridge/save)
+        await api.post(`/api/fridge/save`, analysisResponse);
+
+        // 3. 분석 완료 애니메이션 시뮬레이션 및 자동 이동
+        // 2000ms 분석 시간 시뮬레이션
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         setIsAnalyzeLoading(false);
         setIsAnalysisComplete(true);
+        setMessage(`✅ AI 분석 완료. 추천 조리법을 저장했습니다.`);
 
-        if (response && response.status === "success" && response.dish_name) {
-          setLastAnalyzedResult(response);
-          setMessage(`✅ AI 분석 완료. 추천 조리법을 확인해 보세요.`);
-        } else {
-          setMessage(`❌ AI 분석 실패: 유효한 조리법을 찾을 수 없습니다.`);
-          setLastAnalyzedResult(null);
-        }
+        // 1000ms 후 레시피 페이지로 자동 이동
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // 3단계: 최종 상태 업데이트 및 메시지 표시
-        setTimeout(() => {
-          setIsLoading(false);
-          setIsAnalyzing(false);
-          setSelectedIngredients([]);
-          setTimeout(() => setMessage(""), 3000);
-        }, 1000);
-      }, 2000); // AI 분석 시간 시뮬레이션 2초
+        setViewMode("recipes"); // 레시피 페이지로 자동 이동
+        setIsLoading(false);
+        setIsAnalyzing(false);
+        setSelectedIngredients([]);
+        setIsAnalysisComplete(false); // 상태 초기화
+        setTimeout(() => setMessage(""), 3000);
+      } else {
+        // AI 분석은 성공했으나 유효한 조리법을 찾지 못한 경우
+        setIsAnalyzeLoading(false);
+        setIsLoading(false);
+        setIsAnalyzing(false);
+        setSelectedIngredients([]);
+        setLastAnalyzedResult(null); // 띄어쓰기 수정 부분
+        setMessage(`❌ AI 분석 실패: 유효한 조리법을 찾을 수 없습니다.`);
+        setTimeout(() => setMessage(""), 3000);
+      }
     } catch (error) {
-      console.error("AI Analyze Error:", error);
-
+      console.error("AI Analyze/Save Error:", error);
       // --- 에러 시 애니메이션 즉시 종료 및 메시지 표시 ---
+
       setIsAnalyzeLoading(false);
       setIsLoading(false);
       setIsAnalyzing(false);
       setSelectedIngredients([]);
       setLastAnalyzedResult(null);
-      setMessage(`❌ AI 분석 요청 실패: ${error.message}`);
+      setMessage(`❌ AI 분석 요청 또는 저장 실패: ${error.message}`);
       setTimeout(() => setMessage(""), 3000);
       // --- ------------------------------------ ---
     }
@@ -363,12 +373,7 @@ function MyRefrigerator() {
 
   // 15. 🎯 [뷰 분기] 레시피 모드 렌더링
   if (viewMode === "recipes") {
-    return (
-      <MyRecipes
-        setViewMode={setViewMode}
-        lastAnalyzedResult={lastAnalyzedResult}
-      />
-    );
+    return <MyRecipes setViewMode={setViewMode} />;
   }
 
   // 16. 기본 냉장고 뷰 렌더링 (통합된 IngredientList 포함)
@@ -422,26 +427,6 @@ function MyRefrigerator() {
           <p className={`status-message ${getMessageType(message)}`}>
             {message.replace(/^(✅|❌)/, "").trim()}
           </p>
-        )}
-
-        {/* 분석 완료 시 레시피 페이지로 이동하는 버튼 (isAnalysisComplete 상태 활용) */}
-        {isAnalysisComplete && (
-          <div className="analysis-result-prompt">
-            <p className="status-message success">
-              ✅ 새로운 조리법 분석이 완료되었습니다!
-            </p>
-            <div className="button-group">
-              <button
-                onClick={() => {
-                  setViewMode("recipes");
-                  setIsAnalysisComplete(false);
-                }}
-                className="analyze-request-btn"
-              >
-                추천 조리법 확인하기
-              </button>
-            </div>
-          </div>
         )}
 
         {/* 1. 재료 추가 폼 영역 */}
@@ -502,7 +487,6 @@ function MyRefrigerator() {
               </span>
             )}
           </h3>
-
           <div className="ingredient-list-wrapper">
             <div className="ingredient-header">
               {isAnalyzing && (
@@ -512,7 +496,6 @@ function MyRefrigerator() {
               <span className="ingredient-quantity-col">수량</span>
               <span className="button-group-col">관리</span>
             </div>
-
             {ingredient.length === 0 ? (
               <p className="status-message info-no-border">
                 냉장고가 비어있습니다. 재료를 추가해 주세요!
@@ -534,7 +517,6 @@ function MyRefrigerator() {
                         />
                       </div>
                     )}
-
                     {editingId !== item.id ? (
                       <>
                         <div className="ingredient-info">
@@ -591,7 +573,6 @@ function MyRefrigerator() {
                             value={formData.quantity}
                             onChange={handleFormChange}
                             placeholder="예: 2개"
-                            required
                           />
                         </div>
                         <div className="button-group button-group-col">
@@ -619,9 +600,7 @@ function MyRefrigerator() {
             )}
           </div>
         </div>
-
         <hr />
-
         {/* 3. 재료 분석 요청/취소 버튼 그룹 (분석 모드일 때만 표시) */}
         {!isFormActive && isAnalyzing && (
           <div className="add-ingredient-section">
@@ -632,7 +611,7 @@ function MyRefrigerator() {
                   className="analyze-request-btn"
                   disabled={selectedIngredients.length === 0 || isLoading}
                 >
-                  {isLoading
+                  {isLoading && isAnalyzeLoading
                     ? "분석 요청 중..."
                     : `분석 요청하기 (${selectedIngredients.length}개 선택)`}
                 </button>
