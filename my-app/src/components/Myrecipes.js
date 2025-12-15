@@ -6,7 +6,7 @@ import "../css/Myfridge.css"; // 기본 CSS 사용
 import "../css/Myrecipes.css"; // 레시피 전용 CSS 사용
 import YouTube from "./YouTube"; // 🎯 YouTube 컴포넌트 (실제 API 연동 구조)
 
-function MyRecipes({ lastAnalyzedResult }) {
+function MyRecipes() {
   const api = useApi();
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,46 +15,61 @@ function MyRecipes({ lastAnalyzedResult }) {
   // 🎯 현재 상세 정보가 펼쳐진 레시피의 ID를 저장합니다.
   const [expandedRecipeId, setExpandedRecipeId] = useState(null);
 
-  // 🎯 1. AI 분석 결과를 목록 형태로 변환 및 상태 설정
-  const processAnalyzedResult = useCallback(() => {
+  // 🎯 1. DB에서 레시피 목록을 조회하는 로직 (GET) - 💡 AI 스키마 모든 필드 매핑 포함
+  const fetchRecipes = useCallback(async () => {
     setIsLoading(true);
-    setMessage("AI 분석 결과를 처리 중...");
+    setMessage("저장된 AI 추천 조리법 목록을 불러오는 중...");
 
-    let dataToSet = [];
+    try {
+      // 서버에서 DB에 저장된 분석 결과/추천 레시피 목록을 조회합니다.
+      const response = await api.get(`/api/recipes/list`);
 
-    // [주요 경로] 서버가 여러 레시피를 담은 배열을 반환했을 경우 (5개 이상 추천)
-    if (lastAnalyzedResult && Array.isArray(lastAnalyzedResult)) {
-      dataToSet = lastAnalyzedResult;
-      setMessage(`✅ ${lastAnalyzedResult.length}개의 조리법을 불러왔습니다.`);
+      // 서버 응답 형태에 따라 데이터를 매핑합니다.
+      const mappedRecipes = Array.isArray(response)
+        ? response.map((item) => {
+            const ingredientsArray =
+              (item.ingredients && item.ingredients.main) || [];
 
-      // [Fallback] 서버가 배열 대신 단일 JSON 객체 형태를 반환했을 경우
-    } else if (lastAnalyzedResult && lastAnalyzedResult.dish_name) {
-      dataToSet = [
-        {
-          // 실제 ID가 없을 경우 임시 ID 사용
-          id: lastAnalyzedResult.id || 1,
-          name: lastAnalyzedResult.dish_name,
-          description: lastAnalyzedResult.description,
-          time: lastAnalyzedResult.time || "정보 없음", // AI 응답에 시간이 있다면 사용
-          steps: lastAnalyzedResult.steps || lastAnalyzedResult.description, // 단계/설명
-          input_ingredients: lastAnalyzedResult.input_ingredients,
-        },
-      ];
-      setMessage("✅ AI 분석 결과 (단일)를 표시합니다.");
-    } else {
-      setMessage("ℹ️ 분석 결과가 유효하지 않거나 조리법이 없습니다.");
+            return {
+              id: item.id,
+              name: item.recipeName || item.dish_name,
+              description: item.recipeDescription || item.description,
+              time: item.time || "정보 없음", // AI 스키마에 없는 필드는 기본값 설정
+              steps: item.steps || item.recipeDescription || item.description, // AI 스키마에 없는 필드는 description 대체
+
+              // 💡 [핵심 수정 1]: AI 스키마의 모든 필드를 상태에 명시적으로 저장
+              category: item.meta_info?.category || "정보 없음",
+              recommend: item.meta_info?.recommend || "정보 없음",
+              taste: item.meta_info?.taste || "정보 없음",
+              input_ingredients:
+                ingredientsArray.join(", ") ||
+                item.sourceIngredients ||
+                item.input_ingredients ||
+                "정보 없음",
+              originalIngredients: ingredientsArray,
+              originalMeta: item.meta_info || {},
+            };
+          })
+        : [];
+
+      setRecipes(mappedRecipes);
+      setMessage(
+        `✅ 총 ${mappedRecipes.length}개의 추천 조리법을 불러왔습니다.`
+      );
+    } catch (error) {
+      console.error("Fetch Recipes Error:", error);
+      setMessage(`❌ 조리법 목록 불러오기 실패: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => setMessage(""), 3000);
     }
-
-    setRecipes(dataToSet);
-    setIsLoading(false);
-    setTimeout(() => setMessage(""), 3000);
-  }, [lastAnalyzedResult]); // 🎯 [유지] DB 연동 데이터에 의존
+  }, [api]);
 
   useEffect(() => {
-    processAnalyzedResult();
-  }, [processAnalyzedResult]);
+    fetchRecipes();
+  }, [fetchRecipes]);
 
-  // 🎯 2. 선호 레시피 추가 로직 (POST) - DB 로직 유지
+  // 🎯 2. 선호 레시피 추가 로직 (POST) - 💡 AI 스키마 전체 필드 저장하도록 수정
   const handleToggleFavorite = async (recipe) => {
     if (
       !window.confirm(
@@ -67,11 +82,23 @@ function MyRecipes({ lastAnalyzedResult }) {
     setIsLoading(true);
     setMessage(`'${recipe.name}' 선호 레시피 추가 요청 중...`);
 
-    // DB에 저장할 데이터 페이로드
     const payload = {
-      recipeName: recipe.name,
-      recipeDescription: recipe.description,
-      sourceIngredients: recipe.input_ingredients,
+      // 필수 필드
+      dish_name: recipe.name,
+      description: recipe.description,
+
+      // 메타 정보 (meta_info 스키마 구조에 맞게)
+      meta_info: {
+        category: recipe.category,
+        recommend: recipe.recommend,
+        taste: recipe.taste,
+        ...recipe.originalMeta, // 원본에서 가져온 다른 메타 정보가 있다면 포함
+      },
+
+      // 재료 정보 (ingredients 스키마 구조에 맞게)
+      ingredients: {
+        main: recipe.originalIngredients || [], // 배열 형태의 재료를 사용
+      },
     };
 
     try {
@@ -88,7 +115,7 @@ function MyRecipes({ lastAnalyzedResult }) {
     }
   };
 
-  // 🎯 3. 목록 아이템 클릭 시 상세 정보 토글 (유지)
+  // 🎯 3. 목록 아이템 클릭 시 상세 정보 토글
   const handleRecipeClick = (id) => {
     setExpandedRecipeId(expandedRecipeId === id ? null : id);
   };
@@ -115,17 +142,20 @@ function MyRecipes({ lastAnalyzedResult }) {
       <div className="recipe-list-container">
         {recipes.length === 0 ? (
           <p className="status-message info-no-border">
-            추천할 조리법이 없습니다.
+            추천할 조리법이 없습니다. 냉장고에 재료를 추가하고 AI 분석을 요청해
+            보세요.
           </p>
         ) : (
           <ul className="ingredient-list">
             {recipes.map((recipe, index) => {
-              const isExpanded = expandedRecipeId === recipe.id;
+              // recipe.id가 없으면 임시로 index를 사용
+              const recipeId = recipe.id || `ai-${index}`;
+              const isExpanded = expandedRecipeId === recipeId;
               const videoCount = isExpanded ? 3 : 1;
 
               return (
                 <li
-                  key={recipe.id || `ai-${index}`}
+                  key={recipeId}
                   className="recipe-list-item"
                   style={{
                     display: "flex",
@@ -134,31 +164,27 @@ function MyRecipes({ lastAnalyzedResult }) {
                     position: "relative",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleRecipeClick(recipe.id)}
+                  onClick={() => handleRecipeClick(recipeId)}
                 >
                   {/* A. 요약 뷰 (클릭 영역) */}
                   {!isExpanded && (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className="recipe-summary-view">
                       <h3 style={{ margin: "0", flexGrow: 1 }}>
                         {recipe.name}
                       </h3>
 
+                      {/* 카테고리 및 선호도 요약 표시 */}
+                      <div className="recipe-meta-summary">
+                        <span className="recipe-category">
+                          [{recipe.category}]
+                        </span>
+                        <span className="recipe-recommend">
+                          ⭐ 선호도: {recipe.recommend}점
+                        </span>
+                      </div>
+
                       {/* 🎯 [YouTube 연결] 1개 영상 요청 (썸네일) */}
-                      <div
-                        style={{
-                          width: "150px",
-                          height: "84px",
-                          flexShrink: 0,
-                          marginLeft: "10px",
-                        }}
-                      >
+                      <div className="youtube-thumbnail-container">
                         <YouTube recipeName={recipe.name} videoCount={1} />
                       </div>
                     </div>
@@ -187,38 +213,35 @@ function MyRecipes({ lastAnalyzedResult }) {
                   {/* B. 상세 뷰 (클릭 시 확장) */}
                   {isExpanded && (
                     <div
-                      style={{
-                        width: "100%",
-                        marginTop: "15px",
-                        padding: "10px",
-                        borderTop: "1px dashed #ddd",
-                      }}
+                      className="recipe-detail-view"
+                      // 상세 내용을 클릭해도 리스트가 닫히지 않도록 버블링 방지
                       onClick={(e) => e.stopPropagation()}
                     >
+                      {/* 상세 메타 정보 (카테고리, 선호도, 맛) */}
+                      <div className="recipe-meta-detail">
+                        <p>
+                          ✔️ 카테고리: <strong>{recipe.category}</strong>
+                        </p>
+                        <p>
+                          ✔️ 선호도: <strong>{recipe.recommend}점</strong>
+                        </p>
+                        <p>
+                          ✔️ 주요 맛: <strong>{recipe.taste}</strong>
+                        </p>
+                      </div>
+
                       {/* 조리법 및 시간 */}
-                      <p
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "0.95em",
-                          marginBottom: "8px",
-                        }}
-                      >
+                      <p className="recipe-time-info">
                         ✔️ 조리 시간: {recipe.time || "정보 없음"}
                       </p>
-                      <p
-                        style={{
-                          fontSize: "0.9em",
-                          color: "#333",
-                          lineHeight: 1.4,
-                        }}
-                      >
+                      <p className="recipe-steps-info">
                         {recipe.steps || recipe.description}
                       </p>
 
                       <hr style={{ margin: "15px 0" }} />
 
-                      {/* 🎯 [YouTube 연결] 3개 영상 요청 (썸네일/텍스트 목록) */}
-                      <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
+                      {/* 🎯 [YouTube 연결] 3개 영상 요청 */}
+                      <p className="youtube-header">
                         🎥 참고 유튜브 영상 ({videoCount}개)
                       </p>
                       <YouTube
@@ -226,13 +249,7 @@ function MyRecipes({ lastAnalyzedResult }) {
                         videoCount={videoCount}
                       />
 
-                      <p
-                        style={{
-                          fontSize: "0.8em",
-                          color: "#6c757d",
-                          marginTop: "10px",
-                        }}
-                      >
+                      <p className="recipe-source-info">
                         (입력 재료: {recipe.input_ingredients})
                       </p>
                     </div>
@@ -250,3 +267,4 @@ function MyRecipes({ lastAnalyzedResult }) {
 }
 
 export default MyRecipes;
+
