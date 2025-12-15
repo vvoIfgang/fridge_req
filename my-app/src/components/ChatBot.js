@@ -1,36 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
-// 분리된 CSS 파일을 import 합니다.
-import "../css/ChatBot.css";
+// src/components/Chatbot.js (또는 Chatbot 컴포넌트 파일)
 
-/**
- * 백엔드 스크립트 엔드포인트로 사용자 메시지를 전송하고 Gemini의 답변을 받습니다.
- * @param {string} userMessage 사용자가 입력한 메시지 (선호 음식 정보 등)
- * @returns {Promise<string>} 챗봇의 응답 텍스트 (레시피)
- */
-const realChatAPI = async (userMessage) => {
-  // 실제 웹 서버에서 Python 스크립트가 실행되는 엔드포인트로 변경하세요.
-  // 예: '/cgi-bin/chat_handler.py' 또는 '/api/chatbot/recipe'
+import React, { useState, useRef, useEffect } from "react";
+import "../css/ChatBot.css";
+// ✅ 리팩토링: useApi 훅을 가져옵니다.
+import useApi from "../hooks/useApi";
+
+// =========================================================
+// 1. 챗봇 API 호출 로직 (useApi 훅을 통해 간소화)
+// =========================================================
+
+const realChatAPI = async (apiPost, userMessage) => {
+  // useApi 훅이 Authorization 헤더와 토큰 갱신/재시도를 모두 처리합니다.
   const API_ENDPOINT = "/api/chatbot/recipe";
 
-  const response = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      // 필요한 경우 인증 토큰을 여기에 추가합니다.
-    },
-    // 사용자의 메시지를 백엔드에 JSON 형태로 전달
-    body: JSON.stringify({ message: userMessage }),
-  });
+  // useApi의 post 함수를 사용하여 요청
+  const data = await apiPost(API_ENDPOINT, { message: userMessage });
 
-  const data = await response.json();
-
-  if (!response.ok || data.error) {
-    // HTTP 오류 또는 백엔드 스크립트에서 명시적으로 보낸 오류 처리
-    const errorMessage = data.error || `서버 오류 발생: ${response.status}`;
-    throw new Error(errorMessage);
-  }
-
-  // Gemini로부터 받은 최종 레시피 응답 텍스트를 반환
+  // 성공 시, Gemini로부터 받은 최종 레시피 응답 텍스트를 반환
   return data.response;
 };
 
@@ -39,6 +25,9 @@ const realChatAPI = async (userMessage) => {
 // =========================================================
 
 const Chatbot = () => {
+  // ✅ useApi 훅에서 API 메소드를 가져옵니다.
+  const api = useApi();
+
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -86,8 +75,8 @@ const Chatbot = () => {
     ]);
 
     try {
-      // 3. 실제 API 호출 (realChatAPI 사용)
-      const botResponse = await realChatAPI(userMessage);
+      // 3. 실제 API 호출 (useApi의 post 함수를 realChatAPI로 전달)
+      const botResponse = await realChatAPI(api.post, userMessage);
 
       // 4. 로딩 메시지 제거 및 실제 응답 메시지 추가
       setMessages((prev) => {
@@ -100,8 +89,12 @@ const Chatbot = () => {
       });
     } catch (error) {
       console.error("Chat processing error:", error);
-      // 사용자에게 에러 메시지를 표시
-      const displayError = error.message.includes("서버 오류")
+
+      // useApi에서 토큰 갱신에 완전히 실패했거나, /login으로 리디렉션된 경우
+      // 이 catch 블록은 서버 측 에러나, 토큰 갱신 외의 최종 오류를 처리합니다.
+      const displayError = error.message.includes("세션 만료")
+        ? "세션이 완전히 만료되어 재로그인이 필요합니다."
+        : error.message.includes("요청 실패")
         ? "죄송합니다. 서버 통신에 문제가 발생했습니다."
         : error.message;
 
