@@ -137,3 +137,8 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+#ai 모델 파일 제외
+*.safetensors
+*.bin
+my_recipe_model/
